@@ -17,6 +17,26 @@
  *   Free Software Foundation, Inc.,                                         *
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .          *
  *****************************************************************************/
+/*****************************************************************************
+ *   Copyright (C) 2020 by Bayram KARAHAN                                    *
+ *   <bayramk@gmail.com>                                                     *
+ *                                                                           *
+ *   This program is free software; you can redistribute it and/or modify    *
+ *   it under the terms of the GNU General Public License as published by    *
+ *   the Free Software Foundation; either version 3 of the License, or       *
+ *   (at your option) any later version.                                     *
+ *                                                                           *
+ *   This program is distributed in the hope that it will be useful,         *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of          *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
+ *   GNU General Public License for more details.                            *
+ *                                                                           *
+ *   You should have received a copy of the GNU General Public License       *
+ *   along with this program; if not, write to the                           *
+ *   Free Software Foundation, Inc.,                                         *
+ *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .          *
+ *****************************************************************************/
+
 //#include "mainwindow.h"
 #include <QPalette>
 #include <QDesktopWidget>
@@ -40,6 +60,32 @@ class QPixmap;
 
 MainWindow::MainWindow()
 {
+    /*****************Scene******************************/
+    //qDebug()<<"inital scene property";
+    scene = new Scene();
+    _scene=scene;
+    scene->setParent(this);
+    scene->setSekilZeminColor(QColor(0,0,0,0));
+    //sceneSayfa.append(scene);
+    sceneSayfaNumber=0;
+    sceneSayfaActiveNumber=0;
+    sceneSayfa.append(_scene);
+       /*****************view ************************/
+    //qDebug()<<"inital view property";
+    view = new QGraphicsView(scene);
+   // view->setRenderHints(QPainter::Antialiasing);
+    //QGraphicsView view(&scene);
+     view->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
+
+    view->setAttribute(Qt::WA_TranslucentBackground);
+    view->viewport()->setAutoFillBackground(false);
+    QSize screenSize = qApp->screens()[0]->size();
+
+    view->setSceneRect(0,0,screenSize.width(),screenSize.height());
+    view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setCentralWidget(view);
+/********************************************/
     screenClickDrm=false;
     initPen();
     createButton();
@@ -69,38 +115,6 @@ MainWindow::MainWindow()
     timer->start(1000);
 
 
-
-
-    /*****************Scene******************************/
-    scene = new Scene();
-    _scene=scene;
-    scene->setParent(this);
-    scene->setSekilZeminColor(QColor(0,0,0,0));
-    //sceneSayfa.append(scene);
-    sceneSayfaNumber=0;
-    sceneSayfaActiveNumber=0;
-    sceneSayfa.append(_scene);
-
-    /***********************************************/
-    view = new QGraphicsView(scene);
-   // view->setRenderHints(QPainter::Antialiasing);
-    //QGraphicsView view(&scene);
-     view->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform);
-
-    view->setAttribute(Qt::WA_TranslucentBackground);
-    view->viewport()->setAutoFillBackground(false);
-    QSize screenSize = qApp->screens()[0]->size();
-
-    view->setSceneRect(0,0,screenSize.width(),screenSize.height());
-    view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    setCentralWidget(view);
-
-
-
-
-
-
 //qDebug() <<"zamanlama";
     setUnifiedTitleAndToolBarOnMac(true);
 /*********************************/
@@ -127,35 +141,81 @@ MainWindow::MainWindow()
 
 
     buyukKutu->setGeometry(QRect(kutuLeft,kutuTop,kutuWidth,kutuHeight));
-   //   kalemButtonClick();
     scene->setMode(Scene::Mode::NoMode, DiagramItem::DiagramType::NoType);
     currentScreenMode=Scene::Mode::NoMode;
-    iconButton();
-    buttonColorClear();
-    timerGizleSlot();
-    ekranButtonClick();
-    //scene->setSekilZeminColor(mySekilZeminColor);
-   /* QGraphicsTextItem *text = new QGraphicsTextItem("E-Tahta");
-    scene->addItem(text);
-    text->setPos(0, 0);
-    QGraphicsTextItem *text1 = new QGraphicsTextItem("E-Tahta");
-    scene->addItem(text1);
-   text1->setPos(this->width()-150, this->height()-40);
-*/
-  /*  sayac=new QLabel(this);
-   // kalemKalinlik();
-    sayac->hide();
-    sure=new QSpinBox(this);
 
-    sure->hide();
-    bar=new QProgressBar(this);
-    bar->hide();
-    */
-   // zeminSeffafButtonClick();
-    /*if(myZeminType==0)//zeminSeffafButtonClick();
-       if(myZeminType==1) zeminSiyahButtonClick();
-       if(myZeminType==2) zeminBeyazButtonClick();
-       if(myZeminType==3) zeminBeyazButtonClick();*/
+    /*********************scene screen capture******/
+ palette = new QPalette();
+ //palette->setColor(QPalette::Window, QColor(128,128,128,50));
+
+    pageListwg=new QWidget(this);
+    pageListwg->resize(this->width()/2,boy);
+   /// pageListwg->setPalette(*palette);
+    pageListwg->move(this->width()/4,this->height()-boy-boy/4);
+    //pageListwg->setAutoFillBackground(true);
+    pageListwg->setObjectName("pageListwg");
+
+    pageListwg->setStyleSheet("QWidget#pageListwg{"
+                          "border: 0.5px solid rgb(62, 140, 220,20);"
+                          "border-radius: 5px;"
+                          "background-color:rgb(255,255,255,0);"
+                          "}");
+
+    screenlayout = new QHBoxLayout(pageListwg);
+    screenlayout->setContentsMargins(0, 0, 0, 0);
+
+    screenbtn = new QToolButton(pageListwg);
+    screenbtn->setFixedSize(QSize(boy,boy));
+    screenbtn->setIconSize(QSize(boy*0.7,boy*0.7));
+    screenbtn->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+
+    screenbtn->setText(QString::number(sceneSayfaNumber));
+    screenbtn->setToolTip(QString::number(sceneSayfaNumber));
+    palette->setColor(QPalette::Button, QColor(255,0,0,100));
+    screenbtn->setPalette(*palette);
+    screenbtn->setAutoFillBackground(true);
+
+ screenlayout->addWidget(screenbtn);
+ pageList.append(screenbtn);
+ connect(screenbtn, &QPushButton::clicked, [=]() {
+     sceneSayfaActiveNumber=screenbtn->toolTip().toInt();
+     scene=sceneSayfa[sceneSayfaActiveNumber];
+     view->setScene(scene);
+     iconButton();
+     buttonColorClear();
+     setPenColor(scene->myPenColor);             ///çok önemli işlem
+     myPenSize=(scene->myPenSize);               ///çook önemli
+     setPenStyle(scene->myPenStyle);             ///çook önemli
+     setPenAlpha(scene->myPenAlpha);             ///çook önemli
+     mySekilType=scene->mySekilType;           ///çok önemli
+     sekilButtonIconSlot();
+     mySekilZeminColor=scene->mySekilZeminColor; ///çok önemli
+     mySekilPenSize=scene->mySekilPenSize;       ///çok önemli
+     mySekilKalemColor=scene->mySekilKalemColor; ///çok önemli
+     setSekilPenStyle(scene->mySekilPenStyle);   ///çok önemli
+     myEraseSize=scene->myEraseSize;             ///çok önemli
+     currentScreenMode=scene->sceneMode;         ///çok önemli
+     currentScreenModeSlot();
+    ileriGeriSayfa();
+    for(int i=0;i<pageList.size();i++)
+    {
+        palette->setColor(QPalette::Button, QColor(225,225,225,255));
+        pageList[i]->setPalette(*palette);
+        pageList[i]->setAutoFillBackground(true);
+
+    }
+
+    palette->setColor(QPalette::Button, QColor(255,0,0,100));
+    screenbtn->setPalette(*palette);
+    screenbtn->setAutoFillBackground(true);
+
+ });
+
+ iconButton();
+ buttonColorClear();
+ kalemButtonClick();///önemli
+ timerGizleSlot();///önemli
+ ekranButtonClick();///önemli
 
 }
 

@@ -17,6 +17,26 @@
  *   Free Software Foundation, Inc.,                                         *
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .          *
  *****************************************************************************/
+/*****************************************************************************
+ *   Copyright (C) 2020 by Bayram KARAHAN                                    *
+ *   <bayramk@gmail.com>                                                     *
+ *                                                                           *
+ *   This program is free software; you can redistribute it and/or modify    *
+ *   it under the terms of the GNU General Public License as published by    *
+ *   the Free Software Foundation; either version 3 of the License, or       *
+ *   (at your option) any later version.                                     *
+ *                                                                           *
+ *   This program is distributed in the hope that it will be useful,         *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of          *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
+ *   GNU General Public License for more details.                            *
+ *                                                                           *
+ *   You should have received a copy of the GNU General Public License       *
+ *   along with this program; if not, write to the                           *
+ *   Free Software Foundation, Inc.,                                         *
+ *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .          *
+ *****************************************************************************/
+
 #ifndef KALEMLAYOUT_H
 #define KALEMLAYOUT_H
 //#include<mainwindow.h>
@@ -66,7 +86,9 @@ copyButton->setFlat(true);
 //copyButton->hide();
 //copyButton->move(this->width()/2-en,this->height()-boy-10);
 connect(copyButton, &QPushButton::clicked, [=]()
-{
+{ ///qDebug()<<"kopy kalem çalıştı"<<screenDesktop;
+//if (!screenDesktop)kalemButtonClick();
+
     scene->setMode(Scene::Mode::CopyMode, DiagramItem::DiagramType::Copy);
     currentScreenMode=Scene::Mode::CopyMode;
     iconButton();
@@ -187,10 +209,12 @@ QMenu *zeminMenus=zeminMenu();
 zeminMenus->show();zeminMenus->hide();
 //zeminPopButton->setMenu(zeminMenu(SLOT(zeminPopButton()), DiagramItem::DiagramType::Cizgi));
 connect(zeminPopButton, &QPushButton::clicked, [=]() {
+    //qDebug()<<"zeminpop click";
     currentScreenModeSlot();
-    scene->setPopMenuStatus(true);
+   scene->setPopMenuStatus(true);
     zeminMenus->exec(mapToGlobal(zeminPopButton->pos() + QPoint(kutuLeft-zeminMenus->width()-kutuWidth/2,kutuTop+boy/2)));
     scene->setPopMenuStatus(false);
+
 
 });
 
@@ -526,37 +550,38 @@ connect(pagePopButton, &QPushButton::clicked, [=]() {
     pageMenus->exec(mapToGlobal(pagePopButton->pos() + QPoint(kutuLeft-315,kutuTop+boy/2)));
     scene->setPopMenuStatus(false);
 });*/
-ileriGeriSayfaLabel=new QLabel(this);
+/*ileriGeriSayfaLabel=new QLabel(this);
 //ileriGeriSayfaLabel->setText("( "+QString::number(sceneSayfaNumber+1)+"/"+QString::number(sceneSayfaActiveNumber+1)+" )");
 ileriGeriSayfaLabel->setText("  "+QString::number(sceneSayfaNumber+1)+"/"+QString::number(sceneSayfaActiveNumber+1));
 ileriGeriSayfaLabel->setStyleSheet("QLabel { color:#3e8cb7;}");
 ileriGeriSayfaLabel->move(this->width()/2-en/10,this->height()-boy-boy/10);
 ileriGeriSayfaLabel->hide();
+*/
 /***************************************************************/
-nextSayfaButton = new QPushButton(this);
+/*nextSayfaButton = new QPushButton(this);
 nextSayfaButton->setIcon(QIcon(":icons/nextpage.png"));
 nextSayfaButton->setFixedSize(en, boy);
 nextSayfaButton->setIconSize(QSize(en,boy));
 nextSayfaButton->setFlat(true);
 nextSayfaButton->hide();
-nextSayfaButton->move(this->width()/2+boy*2,this->height()-boy-boy/4);
+nextSayfaButton->move(this->width()/20*10.5+boy*2,this->height()-boy-boy/4);
 
 connect(nextSayfaButton, &QPushButton::clicked, [=]()
 {
     ileriSayfaButtonClick();
-   });
+   });*/
 /***************************************************************/
-backSayfaButton = new QPushButton(this);
+/*backSayfaButton = new QPushButton(this);
 backSayfaButton->setIcon(QIcon(":icons/backpage.png"));
 backSayfaButton->setFixedSize(en, boy);
 backSayfaButton->setIconSize(QSize(en,boy));
 backSayfaButton->setFlat(true);
 backSayfaButton->hide();
-backSayfaButton->move(this->width()/2-boy*2,this->height()-boy-boy/4);
+backSayfaButton->move(this->width()/20*9.5-boy*2,this->height()-boy-boy/4);
 connect(backSayfaButton, &QPushButton::clicked, [=]()
 {
 geriSayfaButtonClick();
-});
+});*/
 /***************************************************************/
 /***************************************************************/
 delSayfaButton = new QPushButton(this);
@@ -564,8 +589,9 @@ delSayfaButton->setIcon(QIcon(":icons/delpage.png"));
 delSayfaButton->setFixedSize(en, boy);
 delSayfaButton->setIconSize(QSize(en*0.8,boy*0.8));
 delSayfaButton->setFlat(true);
-delSayfaButton->hide();
-delSayfaButton->move(this->width()/2+boy,this->height()-boy-boy/4);
+///delSayfaButton->hide();
+delSayfaButton->setEnabled(false);
+delSayfaButton->move(this->width()/4*3,this->height()-boy-boy/4);
 connect(delSayfaButton, &QPushButton::clicked, [=]()
 {
 silSayfaButtonClick();
@@ -578,7 +604,7 @@ addSayfaButton->setFixedSize(en*c, boy);
 addSayfaButton->setIconSize(QSize(en*0.8,boy*0.8));
 addSayfaButton->setFlat(true);
 //addSayfaButton->hide();
-addSayfaButton->move(this->width()/2-boy,this->height()-boy-boy/4);
+addSayfaButton->move(this->width()/4-boy,this->height()-boy-boy/4);
 connect(addSayfaButton, &QPushButton::clicked, [=]()
 {
 ekleSayfaButtonClick();
