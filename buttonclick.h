@@ -1,3 +1,22 @@
+/*****************************************************************************
+ *   Copyright (C) 2020 by Bayram KARAHAN                                    *
+ *   <bayramk@gmail.com>                                                     *
+ *                                                                           *
+ *   This program is free software; you can redistribute it and/or modify    *
+ *   it under the terms of the GNU General Public License as published by    *
+ *   the Free Software Foundation; either version 3 of the License, or       *
+ *   (at your option) any later version.                                     *
+ *                                                                           *
+ *   This program is distributed in the hope that it will be useful,         *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of          *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
+ *   GNU General Public License for more details.                            *
+ *                                                                           *
+ *   You should have received a copy of the GNU General Public License       *
+ *   along with this program; if not, write to the                           *
+ *   Free Software Foundation, Inc.,                                         *
+ *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .          *
+ *****************************************************************************/
 #ifndef BUTTONCLICK_H
 #define BUTTONCLICK_H
 #include <iostream>
@@ -864,33 +883,51 @@ void MainWindow::klavyeButtonClick(){
 }
 void MainWindow::infoButtonClick(){
     QMessageBox msgBox;
-                   msgBox.setText("Bu uygulama etkileşimli tahtalarda kullanılmak üzere yazılmıştır."
-                                  "\n"
-                                  "\nYapılabilecek Eylemler:"
-                                  "\n\t* Çeşitli Kalem(Normal, Fosforlu, Akıllı)"
-                                  "\n\t* Tahta Rengi (Şeffaf, Beyaz, Siyah,Özel Renk)"
-                                  "\n\t* Tahta Desenleri(Yatay/Dikey Çizgi, Müzik,GüzelYazi)"
-                                  "\n\t* Otomatik Silgi Seçimi(Kalem Kalınlığına Uygun)"
-                                  "\n\t* Ekranda Taşıma Özelliği"
-                                  "\n\t* Tam Ekran Modunda Çalışmalarda Üstte Konumlanma"
-                                  "\n\t* Dışarıdan Arkaplan Resim Yükleme Özelliği"
-                                  "\n\t* Ekran Görüntüsünü Kaydetme Özelliği"
-                                  "\n\t* Geometrik Şekil Seçme,Taşıma,Boyutlandırma Özelliği"
-                                  "\n\t* Farklı Sanal Masaüstünde Çalışma Özelliği"
-                                  "\n\t* Geri Alma Özelliği"
-                                  "\n\t* İleri Alma Özelliği"
-                                  "\n\t* Ekranın Her Alanına Yazma Özelliği"
-                                  "\n\t* Pdf Dosyaları Yükleme ve Çalışma Özelliği"
-                                  "\n\t* Yapılan Çalışmaları PDF Olarak Kaydetme Özelliği"
-                                  "\n\t* Nesne Olarak Resim Ekleme Özelliği"
-                                  "\n\t* Yazdırma Özelliği"
-                                  "\n\t* Ekranın Bölgesini (Kesme,Taşıma,Büyültme) Özelliği"
-                                  "\n\t* Kullanıcı Ayarlarını Kaydetme ve Açma Özelliği"
-                                  "\n\t* Saat Gösterme-Gizleme Özelliği"
-                                  "\n\t* Sınavlar için Sayaç Özelliği"
-                                  "\n"
-                                  "\n\t         Bayram KARAHAN"
-                                  "\n\tBilişim Teknolojileri Öğretmeni");
+    msgBox.setText("Bu uygulama etkileşimli tahtalarda kullanılmak üzere yazılmıştır."
+                   "\n"
+                   "\nYapılabilecek Eylemler:"
+                   "\n\t* Çeşitli Kalem(Normal, Fosforlu, Akıllı)"
+                   "\n\t* Tahta Rengi (Şeffaf, Beyaz, Siyah,Özel Renk)"
+                   "\n\t* Tahta Desenleri(Yatay/Dikey Çizgi, Müzik,GüzelYazi)"
+                   "\n\t* Otomatik Silgi Seçimi(Kalem Kalınlığına Uygun)"
+                   "\n\t* Ekranda Taşıma Özelliği"
+                   "\n\t* Tam Ekran Modunda Çalışmalarda Üstte Konumlanma"
+                   "\n\t* Dışarıdan Arkaplan Resim Yükleme Özelliği"
+                   "\n\t* Ekran Görüntüsünü Kaydetme Özelliği"
+                   "\n\t* Geometrik Şekil Seçme,Taşıma,Boyutlandırma Özelliği"
+                   "\n\t* Farklı Sanal Masaüstünde Çalışma Özelliği"
+                   "\n\t* Geri Alma Özelliği"
+                   "\n\t* İleri Alma Özelliği"
+                   "\n\t* Ekranın Her Alanına Yazma Özelliği"
+                   "\n\t* Pdf Dosyaları Yükleme ve Çalışma Özelliği"
+                   "\n\t* Yapılan Çalışmaları PDF Olarak Kaydetme Özelliği"
+                   "\n\t* Nesne Olarak Resim Ekleme Özelliği"
+                   "\n\t* Yazdırma Özelliği"
+                   "\n\t* Ekranın Bölgesini (Kesme,Taşıma,Büyültme) Özelliği"
+                   "\n\t* Kullanıcı Ayarlarını Kaydetme ve Açma Özelliği"
+                   "\n\t* Saat Gösterme-Gizleme Özelliği"
+                   "\n\t* Sınavlar için Sayaç Özelliği"
+                   "/*****************************************************************************"
+                   "\n   Copyright (C) 2020 by Bayram KARAHAN                                     "
+                   "\n   <bayramk@gmail.com>  <www.bayramkarahan.blogspot.com>                                                    "
+                    "\n                                                                           "
+                    "\n   This program is free software; you can redistribute it and/or modify    "
+                    "\n   it under the terms of the GNU General Public License as published by    "
+                    "\n   the Free Software Foundation; either version 3 of the License, or       "
+                    "\n   (at your option) any later version.                                     "
+                    "\n                                                                           "
+                    "\n   This program is distributed in the hope that it will be useful,         "
+                    "\n   but WITHOUT ANY WARRANTY; without even the implied warranty of          "
+                    "\n   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           "
+                    "\n   GNU General Public License for more details.                            "
+                    "\n                                                                           "
+                    "\n   You should have received a copy of the GNU General Public License       "
+                    "\n   along with this program; if not, write to the                          "
+                    "\n   Free Software Foundation, Inc.,                                         "
+                    "\n   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .          "
+                    "\n****************************************************************************"
+
+                   );
                    msgBox.setWindowTitle("E-Tahta 5.0");
                    msgBox.setInformativeText("İstek ve önerileriniz için;"
                                              "\nE-Posta: bayramk@gmail.com"
