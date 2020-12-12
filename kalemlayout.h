@@ -17,6 +17,26 @@
  *   Free Software Foundation, Inc.,                                         *
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .          *
  *****************************************************************************/
+/*****************************************************************************
+ *   Copyright (C) 2020 by Bayram KARAHAN                                    *
+ *   <bayramk@gmail.com>                                                     *
+ *                                                                           *
+ *   This program is free software; you can redistribute it and/or modify    *
+ *   it under the terms of the GNU General Public License as published by    *
+ *   the Free Software Foundation; either version 3 of the License, or       *
+ *   (at your option) any later version.                                     *
+ *                                                                           *
+ *   This program is distributed in the hope that it will be useful,         *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of          *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
+ *   GNU General Public License for more details.                            *
+ *                                                                           *
+ *   You should have received a copy of the GNU General Public License       *
+ *   along with this program; if not, write to the                           *
+ *   Free Software Foundation, Inc.,                                         *
+ *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .          *
+ *****************************************************************************/
+
 #ifndef KALEMLAYOUT_H
 #define KALEMLAYOUT_H
 //#include<mainwindow.h>
@@ -66,7 +86,9 @@ copyButton->setFlat(true);
 //copyButton->hide();
 //copyButton->move(this->width()/2-en,this->height()-boy-10);
 connect(copyButton, &QPushButton::clicked, [=]()
-{
+{ ///qDebug()<<"kopy kalem çalıştı"<<screenDesktop;
+//if (!screenDesktop)kalemButtonClick();
+
     scene->setMode(Scene::Mode::CopyMode, DiagramItem::DiagramType::Copy);
     currentScreenMode=Scene::Mode::CopyMode;
     iconButton();
@@ -187,10 +209,12 @@ QMenu *zeminMenus=zeminMenu();
 zeminMenus->show();zeminMenus->hide();
 //zeminPopButton->setMenu(zeminMenu(SLOT(zeminPopButton()), DiagramItem::DiagramType::Cizgi));
 connect(zeminPopButton, &QPushButton::clicked, [=]() {
+    //qDebug()<<"zeminpop click";
     currentScreenModeSlot();
-    scene->setPopMenuStatus(true);
+   scene->setPopMenuStatus(true);
     zeminMenus->exec(mapToGlobal(zeminPopButton->pos() + QPoint(kutuLeft-zeminMenus->width()-kutuWidth/2,kutuTop+boy/2)));
     scene->setPopMenuStatus(false);
+
 
 });
 
@@ -245,52 +269,48 @@ addShapeButton->setIconSize(QSize(en*cc,boy*b));
 addShapeButton->setFlat(true);
 connect(addShapeButton, &QPushButton::clicked, [=]()
 {
-//qDebug()<<"resim ekle";
-    QStringList arguments;
-    arguments << "-c" << "echo $HOME";
-    QProcess process;
-    process.start("/bin/bash",arguments);
-    process.waitForFinished(-1); // will wait forever until finished
-    QString stdout = process.readAllStandardOutput();
-    stdout.chop(1);
- stdout.append(QString("/Masaüstü/"));
- /*******************************************/
-  Qt::WindowFlags flags = 0;
- flags |= Qt::Window;
- flags |= Qt::X11BypassWindowManagerHint;
- flags |= Qt::CustomizeWindowHint;
- this->setWindowFlags(flags);
+    Qt::WindowFlags flags = 0;
+    flags |= Qt::Window;
+    flags |= Qt::X11BypassWindowManagerHint;
+    flags |= Qt::CustomizeWindowHint;
+    this->setWindowFlags(flags);
 
+    flags |= Qt::SplashScreen;
+    flags |= Qt::X11BypassWindowManagerHint;
+    flags |= Qt::WindowStaysOnTopHint;
+    QFileDialog abc;
+    abc.setWindowFlags(flags);
 
- flags |= Qt::SplashScreen;
- flags |= Qt::X11BypassWindowManagerHint;
- flags |= Qt::WindowStaysOnTopHint;
- QFileDialog abc;
- abc.setWindowFlags(flags);
- /****************************************************/
+    abc.setWindowFlags(flags);
+    if(QSysInfo::kernelType()=="linux"){
+        QString fileName = abc.getOpenFileName(this,
+                                               tr("Resim Aç jpg png bmp"), QDir::homePath()+"/Masaüstü", tr("Image Files (*.png *.jpg *.bmp)"));
+        // qDebug()<<fileName;
+        if(fileName!="")
+        {
+            QPixmap image = QPixmap(fileName);
+            scene->setImage(image);
+            scene->setMode(Scene::Mode::DrawRectangle, DiagramItem::DiagramType::Resim);
+        }
 
-QString fileName = abc.getOpenFileName(this,
-         tr("Resim Aç jpg png bmp"), stdout, tr("Image Files (*.png *.jpg *.bmp)"));
+    }
+    else
+    {//windows
+        QString fileName = abc.getOpenFileName(this,
+                                               tr("Resim Aç jpg png bmp"), QDir::homePath()+"/desktop", tr("Image Files (*.png *.jpg *.bmp)"));
+        if(fileName!="")
+        {
+            QPixmap image = QPixmap(fileName);
+            scene->setImage(image);
+            scene->setMode(Scene::Mode::DrawRectangle, DiagramItem::DiagramType::Resim);
+        }
 
-
-//qDebug() <<fileName;
-
-if (!fileName.isEmpty()) {
-    QPixmap image = QPixmap(fileName);
-    scene->setImage(image);
-     scene->setMode(Scene::Mode::DrawRectangle, DiagramItem::DiagramType::Resim);
-
-}
-/************************************/
-flags |= Qt::Window;
-flags |= Qt::X11BypassWindowManagerHint;
-flags |= Qt::WindowStaysOnTopHint;
-this->setWindowFlags(flags);
-show();
-/***************************************/
-
-    //qDebug()<<"cc:"<<fileName;
-
+    }
+    flags |= Qt::Window;
+    flags |= Qt::X11BypassWindowManagerHint;
+    flags |= Qt::WindowStaysOnTopHint;
+    this->setWindowFlags(flags);
+    show();
 });layout->addWidget(addShapeButton, 38, 0,1,2);
 /***************************************************************/
 /**************************************/
@@ -371,12 +391,21 @@ connect(loadPdfButton, &QPushButton::clicked, [=]() {
     flags |= Qt::WindowStaysOnTopHint;
     QFileDialog abc;
     abc.setWindowFlags(flags);
+     QString fileName;
     /****************************************************/
+    if(QSysInfo::kernelType()=="linux"){
+        fileName = abc.getOpenFileName(this, tr("Open PDF file"),
+                                                        QDir::homePath()+"/Masaüstü",
+                                                        tr("PDF file (*.pdf)"));
+     }
+    else
+    {
+       fileName = abc.getOpenFileName(this, tr("Open PDF file"),
+                                                        QDir::homePath()+"/desktop",
+                                                        tr("PDF file (*.pdf)"));
+    }
 
-    QString fileName = abc.getOpenFileName(this, tr("Open PDF file"),
-                                                    QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation),
-                                                    tr("PDF file (*.pdf)"));
-    flags |= Qt::Window;
+     flags |= Qt::Window;
     flags |= Qt::X11BypassWindowManagerHint;
     flags |= Qt::WindowStaysOnTopHint;
     this->setWindowFlags(flags);
@@ -436,9 +465,15 @@ savePdfButton->setIcon(QIcon(":icons/savepdf.png"));
 
 connect(savePdfButton, &QPushButton::clicked, [=]() {
        // menu->close();
+   // qDebug()<<"hhh";
+    QString fileName;
+    if(QSysInfo::kernelType()=="linux"){
+        fileName=QDir::homePath()+"/Masaüstü/E-Tahta.pdf";
+        }
+    else{//windows
+        fileName=QDir::homePath()+"/desktop/E-Tahta.pdf";
+       }
 
-
-const QString fileName(QDir::homePath()+"/Masaüstü/E-Tahta.pdf");
 QPdfWriter pdfWriter(fileName);
 QPainter painter(&pdfWriter);
 sceneSayfaActiveNumber=0;
@@ -484,33 +519,23 @@ for (int i=0; i<=sceneSayfaNumber; i++) {
 //delete img;
 
 }
-QString stdout;
-stdout.append(QDir::homePath()+"/Masaüstü/E-Tahta.pdf");
-stdout.append("\n\nDosyası Masaüstünüze Kaydedildi. ");
+QString st;
+st.append(QDir::homePath()+"/Masaüstü/E-Tahta.pdf");
+st.append("\n\nDosyası Masaüstünüze Kaydedildi. ");
 
- QMessageBox msgBox;msgBox.setText(stdout);
- /*******************************************/
-  Qt::WindowFlags flags = 0;
- flags |= Qt::Window;
+
+ Qt::WindowFlags flags = 0;
+ flags |= Qt::Dialog;
  flags |= Qt::X11BypassWindowManagerHint;
- flags |= Qt::CustomizeWindowHint;
- this->setWindowFlags(flags);
 
-flags = 0;
- flags |= Qt::Window;
- //flags |= Qt::X11BypassWindowManagerHint;
- //flags |= Qt::WindowStaysOnTopHint;
-
- msgBox.setWindowFlags(flags);
- /****************************************************/
-
-msgBox.setStandardButtons(QMessageBox::Ok);msgBox.exec();
-flags |= Qt::Window;
-flags |= Qt::X11BypassWindowManagerHint;
-flags |= Qt::WindowStaysOnTopHint;
-this->setWindowFlags(flags);
-show();
-
+ QMessageBox messageBox(this);
+ messageBox.setWindowFlags(flags);
+ messageBox.setText("Bilgi\t\t\t");
+ messageBox.setInformativeText(st);
+ QAbstractButton *evetButton =messageBox.addButton(tr("Tamam"), QMessageBox::ActionRole);
+// QAbstractButton *hayirButton =messageBox.addButton(tr("Hayır"), QMessageBox::ActionRole);
+ messageBox.setIcon(QMessageBox::Information);
+         messageBox.exec();
 });
 layout->addWidget(savePdfButton, 44,0,1,2);
 /*******************************/
@@ -526,37 +551,38 @@ connect(pagePopButton, &QPushButton::clicked, [=]() {
     pageMenus->exec(mapToGlobal(pagePopButton->pos() + QPoint(kutuLeft-315,kutuTop+boy/2)));
     scene->setPopMenuStatus(false);
 });*/
-ileriGeriSayfaLabel=new QLabel(this);
+/*ileriGeriSayfaLabel=new QLabel(this);
 //ileriGeriSayfaLabel->setText("( "+QString::number(sceneSayfaNumber+1)+"/"+QString::number(sceneSayfaActiveNumber+1)+" )");
 ileriGeriSayfaLabel->setText("  "+QString::number(sceneSayfaNumber+1)+"/"+QString::number(sceneSayfaActiveNumber+1));
 ileriGeriSayfaLabel->setStyleSheet("QLabel { color:#3e8cb7;}");
 ileriGeriSayfaLabel->move(this->width()/2-en/10,this->height()-boy-boy/10);
 ileriGeriSayfaLabel->hide();
+*/
 /***************************************************************/
-nextSayfaButton = new QPushButton(this);
+/*nextSayfaButton = new QPushButton(this);
 nextSayfaButton->setIcon(QIcon(":icons/nextpage.png"));
 nextSayfaButton->setFixedSize(en, boy);
 nextSayfaButton->setIconSize(QSize(en,boy));
 nextSayfaButton->setFlat(true);
 nextSayfaButton->hide();
-nextSayfaButton->move(this->width()/2+boy*2,this->height()-boy-boy/4);
+nextSayfaButton->move(this->width()/20*10.5+boy*2,this->height()-boy-boy/4);
 
 connect(nextSayfaButton, &QPushButton::clicked, [=]()
 {
     ileriSayfaButtonClick();
-   });
+   });*/
 /***************************************************************/
-backSayfaButton = new QPushButton(this);
+/*backSayfaButton = new QPushButton(this);
 backSayfaButton->setIcon(QIcon(":icons/backpage.png"));
 backSayfaButton->setFixedSize(en, boy);
 backSayfaButton->setIconSize(QSize(en,boy));
 backSayfaButton->setFlat(true);
 backSayfaButton->hide();
-backSayfaButton->move(this->width()/2-boy*2,this->height()-boy-boy/4);
+backSayfaButton->move(this->width()/20*9.5-boy*2,this->height()-boy-boy/4);
 connect(backSayfaButton, &QPushButton::clicked, [=]()
 {
 geriSayfaButtonClick();
-});
+});*/
 /***************************************************************/
 /***************************************************************/
 delSayfaButton = new QPushButton(this);
@@ -564,8 +590,9 @@ delSayfaButton->setIcon(QIcon(":icons/delpage.png"));
 delSayfaButton->setFixedSize(en, boy);
 delSayfaButton->setIconSize(QSize(en*0.8,boy*0.8));
 delSayfaButton->setFlat(true);
-delSayfaButton->hide();
-delSayfaButton->move(this->width()/2+boy,this->height()-boy-boy/4);
+///delSayfaButton->hide();
+delSayfaButton->setEnabled(false);
+delSayfaButton->move(this->width()/4*3,this->height()-boy-boy);
 connect(delSayfaButton, &QPushButton::clicked, [=]()
 {
 silSayfaButtonClick();
@@ -578,7 +605,7 @@ addSayfaButton->setFixedSize(en*c, boy);
 addSayfaButton->setIconSize(QSize(en*0.8,boy*0.8));
 addSayfaButton->setFlat(true);
 //addSayfaButton->hide();
-addSayfaButton->move(this->width()/2-boy,this->height()-boy-boy/4);
+addSayfaButton->move(this->width()/4-boy,this->height()-boy-boy);
 connect(addSayfaButton, &QPushButton::clicked, [=]()
 {
 ekleSayfaButtonClick();
@@ -619,7 +646,7 @@ MoveLeft->setFixedSize(en*c, boy);
 MoveLeft->setIconSize(QSize(en*0.8,boy*0.8));
 MoveLeft->setFlat(true);
 //addSayfaButton->hide();
-MoveLeft->move(20,this->height()-boy-boy/4);
+MoveLeft->move(20,this->height()-boy-boy);
 connect(MoveLeft, &QPushButton::clicked, [=]()
 {
     if(kutuLeft!=10)
@@ -643,7 +670,7 @@ MoveRight->setFixedSize(en*c, boy);
 MoveRight->setIconSize(QSize(en*0.8,boy*0.8));
 MoveRight->setFlat(true);
 //addSayfaButton->hide();
-MoveRight->move(this->width()-en-20,this->height()-boy-boy/4);
+MoveRight->move(this->width()-en-20,this->height()-boy-boy);
 connect(MoveRight, &QPushButton::clicked, [=]()
 {
     if(kutuLeft!=this->width()-kutuWidth-10)
