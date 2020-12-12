@@ -17,6 +17,26 @@
  *   Free Software Foundation, Inc.,                                         *
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .          *
  *****************************************************************************/
+/*****************************************************************************
+ *   Copyright (C) 2020 by Bayram KARAHAN                                    *
+ *   <bayramk@gmail.com>                                                     *
+ *                                                                           *
+ *   This program is free software; you can redistribute it and/or modify    *
+ *   it under the terms of the GNU General Public License as published by    *
+ *   the Free Software Foundation; either version 3 of the License, or       *
+ *   (at your option) any later version.                                     *
+ *                                                                           *
+ *   This program is distributed in the hope that it will be useful,         *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of          *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
+ *   GNU General Public License for more details.                            *
+ *                                                                           *
+ *   You should have received a copy of the GNU General Public License       *
+ *   along with this program; if not, write to the                           *
+ *   Free Software Foundation, Inc.,                                         *
+ *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .          *
+ *****************************************************************************/
+
 #ifndef POPMENU_H
 #define POPMENU_H
 #include <QPdfWriter>
@@ -65,8 +85,8 @@ QMenu *MainWindow::ayarMenu()
        fc->fileWrite("myZeminColor="+myZeminColor.name());
        fc->fileWrite("mySekilPenSize="+QString::number(mySekilPenSize));
        fc->fileWrite("myZeminType="+QString::number(myZeminType));
-       fc->fileWrite("gridYatay="+QString::number(gridYatay));
-       fc->fileWrite("gridDikey="+QString::number(gridDikey));
+       fc->fileWrite("gridYatay="+QString::number(scene->sceneGridYatay));
+       fc->fileWrite("gridDikey="+QString::number(scene->sceneGridDikey));
        fc->fileWrite("clock="+QString::number(clock));
        fc->fileWrite("kutuLeft="+QString::number(kutuLeft));
        fc->fileWrite("kutuTop="+QString::number(kutuTop));
@@ -93,8 +113,8 @@ QMenu *MainWindow::ayarMenu()
        myGridColor=QColor(128,128,128,128);
        mySekilPenSize=4;
        myZeminColor=QColor(0,0,0,0);
-       gridYatay=false;
-       gridDikey=false;
+       scene->sceneGridYatay=false;
+       scene->sceneGridDikey=false;
        gizleGoster=true;
        screenDesktop=true;
        myZeminType=0;
@@ -570,41 +590,49 @@ QMenu *MainWindow::sekilMenu()
     resimEkle->setFlat(true);
     resimEkle->setIcon(QIcon(":/icons/addimage.png"));
     connect(resimEkle, &QPushButton::clicked, [=]() {
-        QStringList arguments;
-        arguments << "-c" << "echo $HOME";
-        QProcess process;
-        process.start("/bin/bash",arguments);
-        process.waitForFinished(-1); // will wait forever until finished
-        QString stdout = process.readAllStandardOutput();
-        stdout.chop(1);
-     stdout.append(QString("/Masaüstü/"));
-     /*******************************************/
-      Qt::WindowFlags flags = 0;
-     flags |= Qt::Window;
-     flags |= Qt::X11BypassWindowManagerHint;
-     flags |= Qt::CustomizeWindowHint;
-     this->setWindowFlags(flags);
+        Qt::WindowFlags flags = 0;
+        flags |= Qt::Window;
+        flags |= Qt::X11BypassWindowManagerHint;
+        flags |= Qt::CustomizeWindowHint;
+        this->setWindowFlags(flags);
 
+        flags |= Qt::SplashScreen;
+        flags |= Qt::X11BypassWindowManagerHint;
+        flags |= Qt::WindowStaysOnTopHint;
+        QFileDialog abc;
+        abc.setWindowFlags(flags);
 
-     flags |= Qt::SplashScreen;
-     flags |= Qt::X11BypassWindowManagerHint;
-     flags |= Qt::WindowStaysOnTopHint;
-     QFileDialog abc;
-     abc.setWindowFlags(flags);
-     /****************************************************/
-    QString fileName =abc.getOpenFileName(this,
-             tr("Resim Aç jpg png bmp"), stdout, tr("Image Files (*.png *.jpg *.bmp)"));
-    //qDebug() <<fileName;
-    /************************************/
-    flags |= Qt::Window;
-    flags |= Qt::X11BypassWindowManagerHint;
-    flags |= Qt::WindowStaysOnTopHint;
-    this->setWindowFlags(flags);
-    show();
+        abc.setWindowFlags(flags);
+        if(QSysInfo::kernelType()=="linux"){
+            QString fileName = abc.getOpenFileName(this,
+                                                   tr("Resim Aç jpg png bmp"), QDir::homePath()+"/Masaüstü", tr("Image Files (*.png *.jpg *.bmp)"));
+            // qDebug()<<fileName;
+            if(fileName!="")
+            {
+                QPixmap image = QPixmap(fileName);
+                scene->setImage(image);
+                scene->setMode(Scene::Mode::DrawRectangle, DiagramItem::DiagramType::Resim);
+            }
+
+        }
+        else
+        {//windows
+            QString fileName = abc.getOpenFileName(this,
+                                                   tr("Resim Aç jpg png bmp"), QDir::homePath()+"/desktop", tr("Image Files (*.png *.jpg *.bmp)"));
+            if(fileName!="")
+            {
+                QPixmap image = QPixmap(fileName);
+                scene->setImage(image);
+                scene->setMode(Scene::Mode::DrawRectangle, DiagramItem::DiagramType::Resim);
+            }
+
+        }
+        flags |= Qt::Window;
+        flags |= Qt::X11BypassWindowManagerHint;
+        flags |= Qt::WindowStaysOnTopHint;
+        this->setWindowFlags(flags);
+        show();
 /***************************************/
-        QPixmap image = QPixmap(fileName);
-        scene->setImage(image);
-         scene->setMode(Scene::Mode::DrawRectangle, DiagramItem::DiagramType::Resim);
 
          menu->close();
     });
@@ -948,7 +976,7 @@ QMenu *MainWindow::zeminMenu()
     zeminBeyazButton->setFixedSize(e, b);zeminBeyazButton->setIconSize(QSize(e,b));
     gridYatayButton->setFixedSize(e, b);gridYatayButton->setIconSize(QSize(e,b));
     gridDikeyButton->setFixedSize(e, b);gridDikeyButton->setIconSize(QSize(e,b));
-    gridOnOffButton->setFixedSize(e, b);gridOnOffButton->setIconSize(QSize(e,b));
+    gridDisableButton->setFixedSize(e, b);gridDisableButton->setIconSize(QSize(e,b));
     zeminCustomColorButton->setFixedSize(e, b);zeminCustomColorButton->setIconSize(QSize(e,b));
     zeminMuzikButton->setFixedSize(e, b);zeminMuzikButton->setIconSize(QSize(e,b));
     zeminGuzelYaziButton->setFixedSize(e, b);zeminGuzelYaziButton->setIconSize(QSize(e,b));
@@ -963,27 +991,28 @@ QMenu *MainWindow::zeminMenu()
     zeminCizgiliSayfaButton->setFlat(true);
     connect(zeminCizgiliSayfaButton, &QPushButton::clicked, [=]()
     {
-        gridOnOffButtonClick();
+          myZeminColor=QColor(0,0,0,0);
+        gridDisableButtonClick();
         DiagramItem *ditem=new DiagramItem();
         mySekilType=DiagramItem::DiagramType::CizgiliSayfa;
         QPixmap pim(zeminImage(ditem->sekilStore(mySekilType,QRectF(QPointF(0,0),QPointF(this->width(),this->height()))),this->width(),this->height(),myGridColor,2));
-        scene->setBackgroundBrush(pim);
+        scene->setForegroundBrush(pim);
 
         //setSekilPenStyle(Qt::DashLine);
     });
-    QPushButton *zeminTemizleButton = new QPushButton;
+/*    QPushButton *zeminTemizleButton = new QPushButton;
     zeminTemizleButton->setIcon(QIcon(":icons/zeminTemizle.png"));
     zeminTemizleButton->setFixedSize(e, b);
     zeminTemizleButton->setIconSize(QSize(e,b));
     zeminTemizleButton->setFlat(true);
     connect(zeminTemizleButton, &QPushButton::clicked, [=]()
     {
-       scene->setBackgroundBrush(QColor(0,0,0,0));
+       scene->setForegroundBrush(QColor(0,0,0,0));
         scene->setPopMenuStatus(false);
       //  menu->close();
-        gridOnOffButtonClick();
+      //  gridOnOffButtonClick();
 
-    });
+    });*/
 
     QPushButton *gridRenkButton = new QPushButton;
     gridRenkButton->setIcon(QIcon(":icons/gridRenk.png"));
@@ -997,37 +1026,30 @@ QMenu *MainWindow::zeminMenu()
     connect(gridRenkButton, &QPushButton::clicked, [=]()
     {
         scene->setPopMenuStatus(false);
-      //  menu->close();
+
         Qt::WindowFlags flags = 0;
-        flags |= Qt::Window;
+        flags |= Qt::Dialog;
         flags |= Qt::X11BypassWindowManagerHint;
-        flags |= Qt::CustomizeWindowHint;
-        this->setWindowFlags(flags);
-
-
-        flags |= Qt::SplashScreen;
-        flags |= Qt::X11BypassWindowManagerHint;
-        flags |= Qt::WindowStaysOnTopHint;
-        QColorDialog abc;
+        QColorDialog abc(this);
         abc.setWindowFlags(flags);
+        abc.setCurrentColor(myGridColor);
+        abc.exec();
 
-
-        QColor newColor = abc.getColor(myGridColor);
-        if (newColor.isValid())
+        QColor newColor = abc.selectedColor();
+         if (newColor.isValid())
           {
-          //  setZeminColor(newColor);
+            /// qDebug()<<"renk seçildi"<<scene->sceneGridYatay<<scene->sceneGridDikey<<scene->sceneGuzelYazi;
             myGridColor = QColor(newColor.red(),newColor.green(),newColor.blue(),128);
             palette->setColor(QPalette::Button, myGridColor);
             gridRenkButton->setPalette(*palette);
+            gridRenkButton->setAutoFillBackground(true);
             gridRenkButton->update();
-               }
-        flags |= Qt::Window;
-        flags |= Qt::X11BypassWindowManagerHint;
-        flags |= Qt::WindowStaysOnTopHint;
-    this->setWindowFlags(flags);
-    show();
+            if(scene->sceneGridYatay) gridYatayButtonClick(scene->sceneGridYatay);
+            if(scene->sceneGridDikey) gridDikeyButtonClick(scene->sceneGridDikey);
+            if(scene->sceneGuzelYazi) zeminGuzelYaziButtonClick(scene->sceneGuzelYazi);
 
-        //setSekilPenStyle(Qt::DashLine);
+               }
+
     });
 
     connect(zeminSeffafButton, &QPushButton::clicked, [=](){scene->setPopMenuStatus(false);/* menu->close();*/});
@@ -1037,11 +1059,11 @@ QMenu *MainWindow::zeminMenu()
     connect(zeminCizgiliSayfaButton, &QPushButton::clicked, [=](){scene->setPopMenuStatus(false);/* menu->close();*/});
     connect(zeminMuzikButton, &QPushButton::clicked, [=](){scene->setPopMenuStatus(false);/* menu->close();*/});
     connect(zeminGuzelYaziButton, &QPushButton::clicked, [=](){scene->setPopMenuStatus(false);/* menu->close();*/});
-    connect(zeminTemizleButton, &QPushButton::clicked, [=](){scene->setPopMenuStatus(false);/* menu->close();*/});
+  ///  connect(zeminTemizleButton, &QPushButton::clicked, [=](){scene->setPopMenuStatus(false);/* menu->close();*/});
     connect(gridRenkButton, &QPushButton::clicked, [=](){scene->setPopMenuStatus(false);/* menu->close();*/});
     connect(gridYatayButton, &QPushButton::clicked, [=](){scene->setPopMenuStatus(false);/* menu->close();*/});
     connect(gridDikeyButton, &QPushButton::clicked, [=](){scene->setPopMenuStatus(false);/* menu->close();*/});
-    connect(gridOnOffButton, &QPushButton::clicked, [=](){scene->setPopMenuStatus(false);/* menu->close();*/});
+    connect(gridDisableButton, &QPushButton::clicked, [=](){scene->setPopMenuStatus(false);/* menu->close();*/});
 
     layout->addWidget(zeminLabel, 0, 1,1,3);
     layout->addWidget(gridSizePopLabel, 1, 1,1,3);
@@ -1054,34 +1076,34 @@ QMenu *MainWindow::zeminMenu()
     layout->addWidget(new QLabel("<font size=1>Şeffaf Tahta</font>"),3,1,1,1,Qt::AlignHCenter);
     layout->addWidget(new QLabel("<font size=1>Siyah Tahta</font>"),3,2,1,1,Qt::AlignHCenter);
     layout->addWidget(new QLabel("<font size=1>Beyaz Tahta</font>"),3,3,1,1,Qt::AlignHCenter);
-    layout->addWidget(new QLabel("<font size=1>Renk Seç</font>"),3,4,1,1,Qt::AlignHCenter);
+    layout->addWidget(new QLabel("<font size=1>Zemin Rengi Seç</font>"),3,4,1,1,Qt::AlignHCenter);
 
 
     layout->addWidget(zeminCizgiliSayfaButton,5,1,1,1,Qt::AlignHCenter);
     layout->addWidget(zeminMuzikButton,5,2,1,1,Qt::AlignHCenter);
     layout->addWidget(zeminGuzelYaziButton,5,3,1,1,Qt::AlignHCenter);
-    layout->addWidget(zeminTemizleButton,5,4,1,1,Qt::AlignHCenter);
+    layout->addWidget(openButton,5,4,1,1,Qt::AlignHCenter);
 
     layout->addWidget(new QLabel("<font size=1>Çizgi Deseni</font>"),6,1,1,1,Qt::AlignHCenter);
     layout->addWidget(new QLabel("<font size=1>Müzik Deseni</font>"),6,2,1,1,Qt::AlignHCenter);
     layout->addWidget(new QLabel("<font size=1>Güzelyazı</font>"),6,3,1,1,Qt::AlignHCenter);
-    layout->addWidget(new QLabel("<font size=1>Desen Temizle</font>"),6,4,1,1,Qt::AlignHCenter);
+    layout->addWidget(new QLabel("<font size=1>Desen Resim Ekle</font>"),6,4,1,1,Qt::AlignHCenter);
 
     layout->addWidget(penSize,10,1,1,4,Qt::AlignHCenter);
 
     layout->addWidget(gridRenkButton,15,1,1,1,Qt::AlignHCenter);
     layout->addWidget(gridYatayButton,15,2,1,1,Qt::AlignHCenter);
     layout->addWidget(gridDikeyButton,15,3,1,1,Qt::AlignHCenter);
-    layout->addWidget(gridOnOffButton,15,4,1,1,Qt::AlignHCenter);
-    layout->addWidget(new QLabel("<font size=1>Çizgi</font>"),16,1,1,1,Qt::AlignHCenter);
+    layout->addWidget(gridDisableButton,15,4,1,1,Qt::AlignHCenter);
+    layout->addWidget(new QLabel("<font size=1>Çizgi Rengi Seç</font>"),16,1,1,1,Qt::AlignHCenter);
     layout->addWidget(new QLabel("<font size=1>Yatay Çizgi</font>"),16,2,1,1,Qt::AlignHCenter);
     layout->addWidget(new QLabel("<font size=1>Dikey Çizgi</font>"),16,3,1,1,Qt::AlignHCenter);
     layout->addWidget(new QLabel("<font size=1>Çizgi Temizle</font>"),16,4,1,1,Qt::AlignHCenter);
 
     //openButton->show();
     //openButton->resize(e,b);
-    layout->addWidget( openButton,17,2,1,1,Qt::AlignHCenter);
-    layout->addWidget(new QLabel("<font size=1>Resim Ekle</font>"),18,2,1,1,Qt::AlignHCenter);
+   // layout->addWidget( openButton,17,2,1,1,Qt::AlignHCenter);
+   // layout->addWidget(new QLabel("<font size=1>Resim Ekle</font>"),18,2,1,1,Qt::AlignHCenter);
 
     //layout->setColumnStretch(6, 255);
     // add a widget action to the context menu
