@@ -34,7 +34,7 @@ void MainWindow::screenClickButtonClick()
     buttonColorClear();
 
     if(screenClickDrm)
-    {  //qDebug()<<"pasif";
+    { /// qDebug()<<"pasif";
         screenClickDrm=false;
         currentScreenModeSlot();
         palette->setColor(QPalette::Button, QColor(0,0,0,0));
@@ -43,10 +43,14 @@ void MainWindow::screenClickButtonClick()
         //currentScreenMode=tempcurrentScreenMode;
         scene->setMode(currentScreenMode, DiagramItem::DiagramType::NoType);
         scene->setMousePressStatus(true);
+        QPalette palet;
+        palet.setBrush(QPalette::Background, QColor(0,0,0,1));
+        this->setPalette(palet);  //setZeminColor(myZeminColor);
+     this->repaint();
         //
     }else
     {
-        //qDebug()<<"aktif";
+       // qDebug()<<"aktif";
         screenClickDrm=true;
         palette->setColor(QPalette::Button, QColor(212,0,0,255));
         screenClickButton->setPalette(*palette);
@@ -55,6 +59,10 @@ void MainWindow::screenClickButtonClick()
         scene->setMode(Scene::Mode::NoMode, DiagramItem::DiagramType::NoType);
     scene->setMousePressStatus(false);
     //currentScreenModeSlot();
+    QPalette palet;
+    palet.setBrush(QPalette::Background, QColor(0,0,0,0));
+    this->setPalette(palet);  //setZeminColor(myZeminColor);
+ this->repaint();
 
     }
 
@@ -458,11 +466,11 @@ void MainWindow::zeminSeffafButtonClick(){
     this->setAttribute(Qt::WA_TranslucentBackground, true);
     this->setAttribute(Qt::WA_NoSystemBackground, false);
     //this->setAttribute(Qt::WA_NoBackground,true);
-    this->repaint();
+
     QPalette palet;
     palet.setBrush(QPalette::Background, QColor(0,0,0,1));
     this->setPalette(palet);  //setZeminColor(myZeminColor);
-
+ this->repaint();
 
 }
 void MainWindow::zeminSiyahButtonClick(){
@@ -995,12 +1003,15 @@ void MainWindow::infoButtonClick(){
 
     //msgBox.setDefaultButton(QMessageBox::Save);
     msgBox.exec();
-    //   kalemEgitim();
-    flags |= Qt::Window;
-    flags |= Qt::X11BypassWindowManagerHint;
-    flags |= Qt::WindowStaysOnTopHint;
-    this->setWindowFlags(flags);
-    show();
+    setWindowFlags(Qt::FramelessWindowHint);
+    // setWindowFlags(Qt::WindowStaysOnTopHint);
+     //setWindowFlags(Qt::X11BypassWindowManagerHint);
+
+     setAttribute(Qt::WA_StaticContents);
+     setAttribute(Qt::WA_TranslucentBackground, true);
+     setWindowIcon(QIcon(":icons/screenpen.png"));
+     show();
+
 
 
 }
@@ -1102,11 +1113,14 @@ void MainWindow::openButtonClick(){
         }
 
     }
-    flags |= Qt::Window;
-    flags |= Qt::X11BypassWindowManagerHint;
-    flags |= Qt::WindowStaysOnTopHint;
-    this->setWindowFlags(flags);
-    show();
+    setWindowFlags(Qt::FramelessWindowHint);
+    // setWindowFlags(Qt::WindowStaysOnTopHint);
+     //setWindowFlags(Qt::X11BypassWindowManagerHint);
+
+     setAttribute(Qt::WA_StaticContents);
+     setAttribute(Qt::WA_TranslucentBackground, true);
+     setWindowIcon(QIcon(":icons/screenpen.png"));
+     show();
 }
 void MainWindow::buttonColorClear(){
     palette->setColor(QPalette::Button, QColor(212,0,0,0));

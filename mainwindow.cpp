@@ -91,9 +91,9 @@ MainWindow::MainWindow()
     createButton();
     //this->setMinimumSize(0,0);
 
-    setWindowFlags(Qt::FramelessWindowHint);
-    setWindowFlags(Qt::WindowStaysOnTopHint);
-    setWindowFlags(Qt::X11BypassWindowManagerHint);
+   setWindowFlags(Qt::FramelessWindowHint);
+   // setWindowFlags(Qt::WindowStaysOnTopHint);
+    //setWindowFlags(Qt::X11BypassWindowManagerHint);
 
     setAttribute(Qt::WA_StaticContents);
     setAttribute(Qt::WA_TranslucentBackground, true);
@@ -273,7 +273,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
     {
       ///  qDebug()<<"main press sunu";
         ekranButtonClick();
-        system("sleep 0.2&&xdotool click 1");
+      //  system("sleep 0.2&&xdotool click 1");
 
         ekranButtonClick();
        /// screenClickButtonClick();

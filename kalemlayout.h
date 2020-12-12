@@ -268,7 +268,7 @@ addShapeButton->setFixedSize(en*c, boy*b);
 addShapeButton->setIconSize(QSize(en*cc,boy*b));
 addShapeButton->setFlat(true);
 connect(addShapeButton, &QPushButton::clicked, [=]()
-{
+{qDebug()<<"hh";
     Qt::WindowFlags flags = 0;
     flags |= Qt::Window;
     flags |= Qt::X11BypassWindowManagerHint;
@@ -306,11 +306,14 @@ connect(addShapeButton, &QPushButton::clicked, [=]()
         }
 
     }
-    flags |= Qt::Window;
-    flags |= Qt::X11BypassWindowManagerHint;
-    flags |= Qt::WindowStaysOnTopHint;
-    this->setWindowFlags(flags);
-    show();
+    setWindowFlags(Qt::FramelessWindowHint);
+    // setWindowFlags(Qt::WindowStaysOnTopHint);
+     //setWindowFlags(Qt::X11BypassWindowManagerHint);
+
+     setAttribute(Qt::WA_StaticContents);
+     setAttribute(Qt::WA_TranslucentBackground, true);
+     setWindowIcon(QIcon(":icons/screenpen.png"));
+     show();
 });layout->addWidget(addShapeButton, 38, 0,1,2);
 /***************************************************************/
 /**************************************/
@@ -405,11 +408,21 @@ connect(loadPdfButton, &QPushButton::clicked, [=]() {
                                                         tr("PDF file (*.pdf)"));
     }
 
-     flags |= Qt::Window;
-    flags |= Qt::X11BypassWindowManagerHint;
-    flags |= Qt::WindowStaysOnTopHint;
-    this->setWindowFlags(flags);
-    show();
+     //flags |= Qt::Window;
+   // flags |= Qt::X11BypassWindowManagerHint;
+    //flags |= Qt::WindowStaysOnTopHint;
+    //this->setWindowFlags(flags);
+  //
+
+    setWindowFlags(Qt::FramelessWindowHint);
+    // setWindowFlags(Qt::WindowStaysOnTopHint);
+     //setWindowFlags(Qt::X11BypassWindowManagerHint);
+
+     setAttribute(Qt::WA_StaticContents);
+     setAttribute(Qt::WA_TranslucentBackground, true);
+     setWindowIcon(QIcon(":icons/screenpen.png"));
+     show();
+       /*****************************************/
 
     if (fileName.isEmpty()) {
         return;

@@ -627,11 +627,14 @@ QMenu *MainWindow::sekilMenu()
             }
 
         }
-        flags |= Qt::Window;
-        flags |= Qt::X11BypassWindowManagerHint;
-        flags |= Qt::WindowStaysOnTopHint;
-        this->setWindowFlags(flags);
-        show();
+        setWindowFlags(Qt::FramelessWindowHint);
+        // setWindowFlags(Qt::WindowStaysOnTopHint);
+         //setWindowFlags(Qt::X11BypassWindowManagerHint);
+
+         setAttribute(Qt::WA_StaticContents);
+         setAttribute(Qt::WA_TranslucentBackground, true);
+         setWindowIcon(QIcon(":icons/screenpen.png"));
+         show();
 /***************************************/
 
          menu->close();
