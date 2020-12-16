@@ -17,6 +17,26 @@
  *   Free Software Foundation, Inc.,                                         *
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .          *
  *****************************************************************************/
+/*****************************************************************************
+ *   Copyright (C) 2020 by Bayram KARAHAN                                    *
+ *   <bayramk@gmail.com>                                                     *
+ *                                                                           *
+ *   This program is free software; you can redistribute it and/or modify    *
+ *   it under the terms of the GNU General Public License as published by    *
+ *   the Free Software Foundation; either version 3 of the License, or       *
+ *   (at your option) any later version.                                     *
+ *                                                                           *
+ *   This program is distributed in the hope that it will be useful,         *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of          *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
+ *   GNU General Public License for more details.                            *
+ *                                                                           *
+ *   You should have received a copy of the GNU General Public License       *
+ *   along with this program; if not, write to the                           *
+ *   Free Software Foundation, Inc.,                                         *
+ *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .          *
+ *****************************************************************************/
+
 #ifndef SCENE_H
 #define SCENE_H
 #include <QMainWindow>
@@ -30,7 +50,6 @@
 #include <QGraphicsRectItem>
 #include<diagramitem.h>
 #include<verectangle.h>
-
 #include<QVector>
 #include<QHoverEvent>
 #include <QGraphicsSceneEvent>
@@ -52,11 +71,6 @@ public:
               IleriAlMode,GeriAlMode,CopyMode};
     enum ModeTrue {DrawPenTrue,DrawPenFosforTrue,DrawLineTrue,CopyModeTrue,DrawRectangleTrue,EraseModeTrue,SelectObjectTrue,NoModeTrue};
     Scene(QObject* parent = 0);
-     QList<QGraphicsItem*> historyBack;
-     QStringList historyBackAction;
-     QList<QGraphicsItem*> historyNext;
-     QStringList historyNextAction;
-
     void setMode(Mode mode, DiagramItem::DiagramType sekil);
     //void setPen(QColor _myPencolor, int _alpha, int _myPenSize);
     void setPenSize(int _myPenSize);
@@ -82,6 +96,41 @@ public:
     // QColor myBrushColor;
     QPixmap myImage;
     QVector<QPointF> points;
+    /************************************/
+    QColor myPenColor;
+    int myPenAlpha;
+    int myPenSize;
+    int mySekilPenSize;
+    QColor mySekilZeminColor;
+    QColor mySekilKalemColor;
+    Qt::PenStyle myPenStyle;
+    Qt::PenStyle mySekilPenStyle;
+    int myEraseSize;
+    Mode sceneMode;
+    DiagramItem::DiagramType mySekilType;
+    /********************************************/
+    bool myPopMenuStatus;       ///review
+    bool mySekilTanimlamaStatus;///review
+    ModeTrue sceneModeTrue;
+    Scene::Mode tempSceneMode;
+    bool dragMove;
+    bool myMousePress;  
+    DiagramItem::DiagramType tempSekilType;
+    VERectangle* tempCopyModeItemToRectDraw;
+
+    QList<QGraphicsItem*> historyBack;
+    QStringList historyBackAction;
+    QList<QGraphicsItem*> historyNext;
+    QStringList historyNextAction;
+    QList<QGraphicsItem*> graphicsListNext;
+    QList<QGraphicsItem*> graphicsListTempNext;
+
+    QList<QGraphicsItem*> graphicsList;
+    QList<QGraphicsItem*> graphicsListTemp;
+    QList<QGraphicsItem*> graphicsListpoints;
+    bool sceneGridYatay;
+    bool sceneGridDikey;
+    bool sceneGuzelYazi;
 
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
@@ -101,26 +150,7 @@ public slots:
     void slotMove(QGraphicsItem *signalOwner, qreal dx, qreal dy);
 
 private:
-    QColor myPenColor;
-    int myPenAlpha;
-    int myPenSize;
-    int mySekilPenSize;
-    QColor mySekilZeminColor;
-    QColor mySekilKalemColor;
-    bool myPopMenuStatus;
-    bool mySekilTanimlamaStatus;
-    Qt::PenStyle myPenStyle;
-    Qt::PenStyle mySekilPenStyle;
-    int myEraseSize;
-        Mode sceneMode;
-        ModeTrue sceneModeTrue;
-    Scene::Mode tempSceneMode;
 
-    bool dragMove;
-    bool myMousePress;
-
-    DiagramItem::DiagramType _sekil;
-    DiagramItem::DiagramType tempSekilType;
     QPointF origPoint;
     QPointF nokta;
     QPointF startPos;
@@ -135,12 +165,6 @@ private:
     void makeItemsControllable(bool areControllable);
     QRect mainScreenSize;
     QRect currentGeometry;
-    QList<QGraphicsItem*> graphicsListNext;
-    QList<QGraphicsItem*> graphicsListTempNext;
-
-    QList<QGraphicsItem*> graphicsList;
-    QList<QGraphicsItem*> graphicsListTemp;
-    QList<QGraphicsItem*> graphicsListpoints;
 
 QGraphicsLineItem* itemToLineDraw;
 QMainWindow* mw;

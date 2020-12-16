@@ -17,6 +17,26 @@
  *   Free Software Foundation, Inc.,                                         *
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .          *
  *****************************************************************************/
+/*****************************************************************************
+ *   Copyright (C) 2020 by Bayram KARAHAN                                    *
+ *   <bayramk@gmail.com>                                                     *
+ *                                                                           *
+ *   This program is free software; you can redistribute it and/or modify    *
+ *   it under the terms of the GNU General Public License as published by    *
+ *   the Free Software Foundation; either version 3 of the License, or       *
+ *   (at your option) any later version.                                     *
+ *                                                                           *
+ *   This program is distributed in the hope that it will be useful,         *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of          *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
+ *   GNU General Public License for more details.                            *
+ *                                                                           *
+ *   You should have received a copy of the GNU General Public License       *
+ *   along with this program; if not, write to the                           *
+ *   Free Software Foundation, Inc.,                                         *
+ *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .          *
+ *****************************************************************************/
+
 #include "scene.h"
 #include <QApplication>
 #include <QMessageBox>
@@ -45,6 +65,8 @@ Scene::Scene(QObject* parent): QGraphicsScene(parent)
     sceneModeTrue=NoModeTrue;
     itemToLineDraw = 0;
     itemToRectDraw = 0;
+    tempCopyModeItemToRectDraw=0;
+
     //sampleLine=0;
     dragMove=false;
     drawing=false;
@@ -164,7 +186,7 @@ void Scene::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
    case DrawRectangleTrue:{
        if(!itemToRectDraw){
            itemToRectDraw = new VERectangle(this);
-           itemToRectDraw->sekilTur(_sekil);
+           itemToRectDraw->sekilTur(mySekilType);
            itemToRectDraw->setPen(QPen(mySekilKalemColor, mySekilPenSize, mySekilPenStyle));
            itemToRectDraw->setBrush(mySekilZeminColor);
            itemToRectDraw->setImage(myImage);
@@ -172,6 +194,9 @@ void Scene::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
            this->addItem(itemToRectDraw);
            graphicsList.append(itemToRectDraw);
            graphicsListTemp.append(itemToRectDraw);
+           historyBack.append(itemToRectDraw);
+           historyBackAction.append("added");
+
    }
    itemToRectDraw->setRect(0,0,event->scenePos().x() - origPoint.x(),event->scenePos().y() - origPoint.y());
    itemToRectDraw->fareState(false);
@@ -255,8 +280,13 @@ void Scene::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
 
        graphicsList.append(itemToPenDraw);
        graphicsListTemp.append(itemToPenDraw);
+       ///historyBack.append(itemToRectDraw);
+       ///historyBackAction.append("added");
+
        origPoint = event->scenePos();
        graphicsListpoints.append(itemToPenDraw);
+
+
        points<<event->scenePos();
        itemToPenDraw=nullptr;
 
@@ -293,7 +323,7 @@ void Scene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
         //
          drawing = false;
 
-        if(_sekil==DiagramItem::DiagramType::Resim)
+        if(mySekilType==DiagramItem::DiagramType::Resim)
     {
             this->setMode(tempSceneMode, tempSekilType);
 
@@ -547,10 +577,11 @@ void Scene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
             itemToRectDraw->setImage(temp);
 
             itemToRectDraw->setRect(0,0,event->scenePos().x() - origPoint.x(),event->scenePos().y() - origPoint.y());
-            this->addItem(itemToRectDraw);
-             itemToRectDraw->fareState(true);
-            graphicsList.append(itemToRectDraw);
-            graphicsListTemp.append(itemToRectDraw);
+         ///   this->addItem(itemToRectDraw);
+             itemToRectDraw->fareState(false);
+
+            tempCopyModeItemToRectDraw=itemToRectDraw;///Çok önemli
+
             //myImage;
             itemToRectDraw = 0;
             drawing = false;
@@ -558,7 +589,7 @@ void Scene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
             dragMove=true;
             //this->removeItem(text);
             //this->removeItem(text1);
-           // makeItemsControllable(false);
+            makeItemsControllable(false);
             /**********************************/
             FileCrud *fc=new FileCrud();
             fc->dosya="E-Tahta.copy.ini";
@@ -642,19 +673,19 @@ setSelectionArea(pp);
 //qDebug()<<"alan "<<alan;
 float k=(3.1416*mj*mj)/(4*alan);
 qDebug()<<"K:"<<k;
-_sekil=DiagramItem::DiagramType::NoType;
- if(k>0&&k<1.4) _sekil=DiagramItem::DiagramType::Dortgen;
- else if(k>1.5&&k<2) _sekil=DiagramItem::DiagramType::Cember;
-else if(k>2&&k<2.9) _sekil=DiagramItem::DiagramType::Ucgen;
-else if(k>2.9&&k<6) _sekil=DiagramItem::DiagramType::Dortgen;
-else if(k>6) _sekil=DiagramItem::DiagramType::Cember;
+mySekilType=DiagramItem::DiagramType::NoType;
+ if(k>0&&k<1.4) mySekilType=DiagramItem::DiagramType::Dortgen;
+ else if(k>1.5&&k<2) mySekilType=DiagramItem::DiagramType::Cember;
+else if(k>2&&k<2.9) mySekilType=DiagramItem::DiagramType::Ucgen;
+else if(k>2.9&&k<6) mySekilType=DiagramItem::DiagramType::Dortgen;
+else if(k>6) mySekilType=DiagramItem::DiagramType::Cember;
 
  //origPoint = event->scenePos();
 /**********************************************/
- if(_sekil!=DiagramItem::DiagramType::NoType)
+ if(mySekilType!=DiagramItem::DiagramType::NoType)
  {
      itemToRectDraw = new VERectangle(this);
-     itemToRectDraw->sekilTur(_sekil);
+     itemToRectDraw->sekilTur(mySekilType);
      itemToRectDraw->setPen(QPen(QColor(0,0,0,255), 4, Qt::SolidLine));
      itemToRectDraw->setBrush(mySekilZeminColor);
      itemToRectDraw->setPos(sx,sy);
@@ -795,8 +826,8 @@ void Scene::setParent(QMainWindow* _mwindow)
 
 void Scene::setMode(Mode mode,DiagramItem::DiagramType sekil){
 
-    tempSekilType=_sekil;
-    _sekil=sekil;
+    tempSekilType=mySekilType;
+    mySekilType=sekil;
     tempSceneMode=sceneMode;
     sceneMode = mode;
      QGraphicsView::DragMode vMode =QGraphicsView::NoDrag;
