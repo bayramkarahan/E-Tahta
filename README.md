@@ -1,8 +1,11 @@
 # E-Tahta
 Ekranda Sanal Kalem ve Pdf Düzenleyici vb. İşlemler Yapabileceğimiz Yazılım.
 ![E-Tahta](https://github.com/bayramkarahan/E-Tahta/blob/main/Clip0014-1.gif)
+<br/>
 Uygulama Qt ortamında c++ ile yazılmıştır..
+<br/>
 Qt 5.11.2 versiyonu ile yazılmıştır.
+<br/>
 Uygulamada pdf için poppler kütüphanesi kullanılmıştır..
 <br/>
 gcc 4.9 versiyon kullanılmıştır..,
