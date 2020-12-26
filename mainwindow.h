@@ -17,6 +17,26 @@
  *   Free Software Foundation, Inc.,                                         *
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .          *
  *****************************************************************************/
+/*****************************************************************************
+ *   Copyright (C) 2020 by Bayram KARAHAN                                    *
+ *   <bayramk@gmail.com>                                                     *
+ *                                                                           *
+ *   This program is free software; you can redistribute it and/or modify    *
+ *   it under the terms of the GNU General Public License as published by    *
+ *   the Free Software Foundation; either version 3 of the License, or       *
+ *   (at your option) any later version.                                     *
+ *                                                                           *
+ *   This program is distributed in the hope that it will be useful,         *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of          *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
+ *   GNU General Public License for more details.                            *
+ *                                                                           *
+ *   You should have received a copy of the GNU General Public License       *
+ *   along with this program; if not, write to the                           *
+ *   Free Software Foundation, Inc.,                                         *
+ *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .          *
+ *****************************************************************************/
+
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
@@ -30,6 +50,7 @@
 #include <QDebug>
 #include<filecrud.h>
 #include<depo.h>
+#include<hovereventfilter.h>
 class QButtonGroup;
 class QAbstractButton;
 class QToolBox;
@@ -74,7 +95,8 @@ public:
     QImage zImage(int w, int h, QColor color) const;
 
 public slots:
-
+    void onHoverIn(QObject* object);
+      void onHoverOut(QObject* object);
 private slots:
     void zamanlama();
     void timerCopySlot();
@@ -118,9 +140,9 @@ private slots:
     void zeminSiyahButtonClick();
     void zeminCustomColorButtonClick();
     void zeminCustomColorInitButtonClick();
-    void gridOnOffButtonClick();
-    void gridYatayButtonClick();
-    void gridDikeyButtonClick();
+    void gridDisableButtonClick();
+    void gridYatayButtonClick(bool toggle);
+    void gridDikeyButtonClick(bool toggle);
     void gizleGosterButtonClick();
     void secButtonClick();
     void tasiButtonClick();
@@ -140,9 +162,9 @@ private slots:
     void kalemEgitim();
 
     void zeminMuzikButtonClick();
-    void zeminGuzelYaziButtonClick();
+    void zeminGuzelYaziButtonClick(bool toggle);
     void ileriGeriSayfa();
-
+    void sekilButtonIconSlot();
     void initPen();
     void kalemLayout();
 protected:
@@ -150,14 +172,16 @@ protected:
      void mouseMoveEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     void resizeEvent(QResizeEvent *event) Q_DECL_OVERRIDE;
     void moveEvent(QMoveEvent *event) Q_DECL_OVERRIDE;
+     bool eventFilter(QObject *watched, QEvent *event)  Q_DECL_OVERRIDE;
 
 private:
+     HoverEventFilter* hoverEventFilter;
      qint64 saniye;
     bool gizleGoster;
     bool screenDesktop;
-    bool gridYatay;
-    bool gridDikey;
-    bool guzelYazi;
+   /// bool gridYatay;
+   /// bool gridDikey;
+   /// bool guzelYazi;
     bool clock;
     int myZeminType;//0=seffaf 1=siyah 2=beyaz 3=custom
     void setPenColor(const QColor &newColor);
@@ -200,6 +224,9 @@ private:
        QHBoxLayout *horzinalLayout;
        QHBoxLayout *analayot;
        QWidget *buyukKutu;
+       QWidget *pageListwg;
+       QHBoxLayout *screenlayout;
+
       // QWidget *kutu;
        //QGroupBox *buyukKutu;
 
@@ -270,7 +297,7 @@ private:
     QPushButton *zeminBeyazButton;
     QPushButton *zeminSiyahButton;
     QPushButton *zeminCustomColorButton;
-    QPushButton *gridOnOffButton;
+    QPushButton *gridDisableButton;
     QPushButton *gridYatayButton;
     QPushButton *gridDikeyButton;
     QPushButton *gizleGosterButton;
@@ -314,7 +341,9 @@ private:
     QPushButton *yazdirButton;
     QPushButton *loadPdfButton;
     QPushButton *savePdfButton;
-
+    QToolButton *screenbtn ;
+    QList<QToolButton*> pageList;
+    int zamanlamastart=0;
     //butonlar ayarlanıyor
     void iconButton()
     {
@@ -356,7 +385,7 @@ private:
         zeminBeyazButton->setIcon(QIcon(":icons/whiteboard.png"));
         zeminSiyahButton->setIcon(QIcon(":icons/blackboard.png"));
         zeminCustomColorButton->setIcon(QIcon(":icons/zeminCustomColor.png"));
-        gridOnOffButton->setIcon(QIcon(":icons/gridonoff.png"));
+        gridDisableButton->setIcon(QIcon(":icons/gridonoff.png"));
         gridYatayButton->setIcon(QIcon(":icons/gridyatay.png"));
         gridDikeyButton->setIcon(QIcon(":icons/griddikey.png"));
 
@@ -413,7 +442,7 @@ private:
          zeminBeyazButton= new QPushButton(this);
          zeminSiyahButton= new QPushButton(this);
          zeminCustomColorButton= new QPushButton(this);
-         gridOnOffButton= new QPushButton(this);
+         gridDisableButton= new QPushButton(this);
          gridYatayButton= new QPushButton(this);
          gridDikeyButton= new QPushButton(this);
          gizleGosterButton= new QPushButton(this);
@@ -466,7 +495,7 @@ private:
         zeminBeyazButton->setFlat(true);
         zeminSiyahButton->setFlat(true);
         zeminCustomColorButton->setFlat(true);
-        gridOnOffButton->setFlat(true);
+        gridDisableButton->setFlat(true);
         gridYatayButton->setFlat(true);
         gridDikeyButton->setFlat(true);
         gizleGosterButton->setFlat(true);
@@ -520,7 +549,7 @@ private:
         zeminBeyazButton->setFixedSize(QSize(en,boy));
         zeminSiyahButton->setFixedSize(QSize(en,boy));
         zeminCustomColorButton->setFixedSize(QSize(en,boy));
-        gridOnOffButton->setFixedSize(QSize(en,boy));
+        gridDisableButton->setFixedSize(QSize(en,boy));
         gridYatayButton->setFixedSize(QSize(en,boy));
         gridDikeyButton->setFixedSize(QSize(en,boy));
         gizleGosterButton->setFixedSize(QSize(en*cp,boy));
@@ -571,7 +600,7 @@ private:
         zeminBeyazButton->setIconSize(QSize(en,boy));
         zeminSiyahButton->setIconSize(QSize(en,boy));
         zeminCustomColorButton->setIconSize(QSize(en,boy));
-        gridOnOffButton->setIconSize(QSize(en,boy));
+        gridDisableButton->setIconSize(QSize(en,boy));
         gridYatayButton->setIconSize(QSize(en,boy));
         gridDikeyButton->setIconSize(QSize(en,boy));
       //  gizleGosterButton->setIconSize(QSize(en+en+10,boy));
@@ -704,9 +733,9 @@ private:
         connect(zeminSiyahButton,SIGNAL(clicked()),this,SLOT(zeminSiyahButtonClick()));
         connect(zeminBeyazButton,SIGNAL(clicked()),this,SLOT(zeminBeyazButtonClick()));
         connect(zeminCustomColorButton,SIGNAL(clicked()),this,SLOT(zeminCustomColorButtonClick()));
-        connect(gridOnOffButton,SIGNAL(clicked()),this,SLOT(gridOnOffButtonClick()));
-        connect(gridYatayButton,SIGNAL(clicked()),this,SLOT(gridYatayButtonClick()));
-        connect(gridDikeyButton,SIGNAL(clicked()),this,SLOT(gridDikeyButtonClick()));
+        connect(gridDisableButton,SIGNAL(clicked()),this,SLOT(gridDisableButtonClick()));
+        connect(gridYatayButton,SIGNAL(clicked(bool)),this,SLOT(gridYatayButtonClick(bool)));
+        connect(gridDikeyButton,SIGNAL(clicked(bool)),this,SLOT(gridDikeyButtonClick(bool)));
         connect(gizleGosterButton,SIGNAL(clicked()),this,SLOT(gizleGosterButtonClick()));
 
         connect(secButton,SIGNAL(clicked()),this,SLOT(secButtonClick()));
@@ -717,7 +746,7 @@ private:
         connect(openButton,SIGNAL(clicked()),this,SLOT(openButtonClick()));
 
          connect(zeminMuzikButton,SIGNAL(clicked()),this,SLOT(zeminMuzikButtonClick()));
-         connect(zeminGuzelYaziButton,SIGNAL(clicked()),this,SLOT(zeminGuzelYaziButtonClick()));
+         connect(zeminGuzelYaziButton,SIGNAL(clicked(bool)),this,SLOT(zeminGuzelYaziButtonClick(bool)));
 
 //qDebug() <<"Butonlar Oluşturuldu..";
     }
@@ -749,7 +778,7 @@ private:
         zeminBeyazButton->show();
         zeminSiyahButton->show();
         zeminCustomColorButton->show();
-        gridOnOffButton->show();
+        gridDisableButton->show();
         gridYatayButton->show();
         gridDikeyButton->show();
         gridDikeyButton->show();
@@ -811,7 +840,7 @@ private:
         zeminBeyazButton->hide();
         zeminSiyahButton->hide();
         zeminCustomColorButton->hide();
-        gridOnOffButton->hide();
+        gridDisableButton->hide();
         gridYatayButton->hide();
         gridDikeyButton->hide();
         zeminMuzikButton->hide();
