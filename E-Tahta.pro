@@ -2,6 +2,7 @@ LIBS += -L/usr/local/lib -lpoppler-qt5
 QMAKE_CXXFLAGS = -std=c++11
 QT += widgets gui printsupport xml
 SOURCES += \
+    hovereventfilter.cpp \
     mainwindow.cpp \
     main.cpp \
     gridlines.cpp \
@@ -11,6 +12,7 @@ SOURCES += \
     depo.cpp
 
 HEADERS += \
+    hovereventfilter.h \
     mainwindow.h \
     gridlines.h \
     diagramitem.h \

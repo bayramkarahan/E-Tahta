@@ -17,6 +17,7 @@
  *   Free Software Foundation, Inc.,                                         *
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .          *
  *****************************************************************************/
+
 #include "verectangle.h"
 #include <QPainter>
 #include <QDebug>
@@ -116,7 +117,7 @@ else{
     dclick=false;
 m_cornerFlags = 0;
 hideGrabbers();
-setCursor(Qt::ArrowCursor);
+///setCursor(Qt::ArrowCursor);
   //  qDebug() <<"rectangle nesnesi seçim kaldırıldı";
 }
 /*************************************************/
@@ -396,7 +397,6 @@ void VERectangle::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
                     setCursor(pResult.scaled(30,30,Qt::KeepAspectRatio));
                     break;
                 }
-
         case BottomRight: {
             trans.rotate(135);
             pResult = p.transformed(trans);
@@ -757,7 +757,7 @@ void VERectangle::paint (QPainter *painter, const QStyleOptionGraphicsItem *, QW
     if(sekilTr==DiagramItem::DiagramType::Cember)
         painter->drawEllipse(rect);
     else if(sekilTr==DiagramItem::DiagramType::Resim){
-        painter->drawPixmap(0,0,myImage.scaled(this->rect().width()+2,this->rect().height()+2,Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
+        painter->drawPixmap(0,0,myImage.scaled(this->rect().width(),this->rect().height(),Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
     //painter->drawRect(rect);
     }
     else if(sekilTr==DiagramItem::DiagramType::DrawPath){
