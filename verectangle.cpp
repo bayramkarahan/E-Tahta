@@ -17,6 +17,7 @@
  *   Free Software Foundation, Inc.,                                         *
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .          *
  *****************************************************************************/
+
 #include "verectangle.h"
 #include <QPainter>
 #include <QDebug>
@@ -182,6 +183,7 @@ void VERectangle::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         }
         case TopRight:{
             rotateItem(pt);
+
             break;
         }
         case BottomLeft: {
@@ -208,6 +210,7 @@ void VERectangle::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
                 setPreviousPosition(event->scenePos());
                 emit signalMove(this, dx, dy);
             }
+
             break;
         }
     }
@@ -261,6 +264,13 @@ void VERectangle::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 
 void VERectangle::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
 {
+    ///qDebug() <<"çift tıklama1 "<<rotateState;
+    if(sekilTr==DiagramItem::DiagramType::Pergel){
+
+      rotateState=  !rotateState;
+     /// qDebug() <<"çift tıklama2 "<<rotateState;
+    }
+
   /*  m_actionFlags = (m_actionFlags == ResizeState)?RotationState:ResizeState;
     setVisibilityGrabbers();
     dclick=(!dclick)?true:false;
@@ -365,6 +375,7 @@ void VERectangle::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
         case TopLeft:
 
         case BottomRight:
+
             trans.rotate(135);
             pResult = p.transformed(trans);
             setCursor(pResult.scaled(24,24,Qt::KeepAspectRatio));
@@ -508,7 +519,10 @@ void VERectangle::resizeTop(const QPointF &pt)
 void VERectangle::rotateItem(const QPointF &pt)
 {
     QRectF tmpRect = rect();
-    QPointF center = boundingRect().center();
+    QPointF center;
+    if(rotateState)    center = boundingRect().bottomRight();
+    else center = boundingRect().center();
+
     QPointF corner;
     switch (m_cornerFlags) {
     case TopLeft:
@@ -549,6 +563,10 @@ void VERectangle::rotateItem(const QPointF &pt)
     trans.rotateRadians(rotation() + resultAngle, Qt::ZAxis);
     trans.translate( -center.x(),  -center.y());
     setTransform(trans);
+   // cx= boundingRect().bottomRight().x();
+   // cy= boundingRect().bottomRight().y();
+    cx=corner.x();//boundingRect().width();
+    cy=corner.y();//-boundingRect().height();
 }
 
 void VERectangle::setPositionGrabbers()
@@ -757,8 +775,62 @@ void VERectangle::paint (QPainter *painter, const QStyleOptionGraphicsItem *, QW
     if(sekilTr==DiagramItem::DiagramType::Cember)
         painter->drawEllipse(rect);
     else if(sekilTr==DiagramItem::DiagramType::Resim){
-        painter->drawPixmap(0,0,myImage.scaled(this->rect().width()+2,this->rect().height()+2,Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
-    //painter->drawRect(rect);
+
+           painter->drawPixmap(0,0,myImage.scaled(rect.width(),rect.height(),Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
+
+        //painter->drawRect(rect);
+    }
+    else if(sekilTr==DiagramItem::DiagramType::Pergel){
+
+           painter->drawPixmap(0,0,myImage.scaled(rect.width(),rect.height(),Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
+           if(rotateState)
+           {
+               //qDebug()<<rotateState;
+               QStaticText text;
+               text.setTextWidth(rect.width()*0.9);
+               text.setText("<font size=1>Çizimi Durdurmak için; <br/>Çift Tıklayınız.</font>");
+
+               painter->drawStaticText(QPoint(rect.left()+10,rect.center().y()), text);
+           }else
+           { QStaticText text;
+               text.setTextWidth(rect.width()*0.9);
+               text.setText("<font size=1>Çizmek için Çift Tıklayın,<br/>Yeşil Noktadan Tutup Döndürünüz.</font>");
+
+               painter->drawStaticText(QPoint(rect.left()+10,rect.center().y()), text);
+
+               //qDebug()<<rotateState;
+           }
+        //painter->drawRect(rect);
+    }
+    else if(sekilTr==DiagramItem::DiagramType::Cetvel){
+      /*  if(setRectState==false){
+        setRect(boundingRect().topLeft().x(),boundingRect().topLeft().y(),600,100);
+        setRectState=true;
+    }*/
+           painter->drawPixmap(0,0,myImage.scaled(600,100,Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
+
+        //painter->drawRect(rect);
+    }
+    else if(sekilTr==DiagramItem::DiagramType::Gonye){
+          // painter->drawPixmap(0,0,myImage.scaled(rect.width(),rect.height(),Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
+        painter->drawPixmap(0,0,myImage.scaled(360,250,Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
+    }
+    else if(sekilTr==DiagramItem::DiagramType::Iletki){
+          // painter->drawPixmap(0,0,myImage.scaled(rect.width(),rect.height(),Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
+        painter->drawPixmap(0,0,myImage.scaled(400,250,Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
+
+    }
+    else if(sekilTr==DiagramItem::DiagramType::Kup){
+           painter->drawPixmap(0,0,myImage.scaled(rect.width(),rect.height(),Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
+    }
+    else if(sekilTr==DiagramItem::DiagramType::Silindir){
+           painter->drawPixmap(0,0,myImage.scaled(rect.width(),rect.height(),Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
+    }
+    else if(sekilTr==DiagramItem::DiagramType::Pramit){
+           painter->drawPixmap(0,0,myImage.scaled(rect.width(),rect.height(),Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
+    }
+    else if(sekilTr==DiagramItem::DiagramType::Kure){
+           painter->drawPixmap(0,0,myImage.scaled(rect.width(),rect.height(),Qt::IgnoreAspectRatio,Qt::SmoothTransformation));
     }
     else if(sekilTr==DiagramItem::DiagramType::DrawPath){
       /*  QImage resim;

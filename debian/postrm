@@ -1,0 +1,16 @@
+#!/bin/sh
+
+#rm files from user home
+
+if [ -d "/home" ]; then
+    if ! [ -z "$(ls -A /home)" ]; then
+        for i in /home/*
+        do
+            if [ -d "$i"/E-Tahta.config.ini ]; then
+                rm -frv "$i"/E-Tahta.config.ini
+		
+	    fi
+        done
+    fi
+fi
+

@@ -17,6 +17,26 @@
  *   Free Software Foundation, Inc.,                                         *
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .          *
  *****************************************************************************/
+/*****************************************************************************
+ *   Copyright (C) 2020 by Bayram KARAHAN                                    *
+ *   <bayramk@gmail.com>                                                     *
+ *                                                                           *
+ *   This program is free software; you can redistribute it and/or modify    *
+ *   it under the terms of the GNU General Public License as published by    *
+ *   the Free Software Foundation; either version 3 of the License, or       *
+ *   (at your option) any later version.                                     *
+ *                                                                           *
+ *   This program is distributed in the hope that it will be useful,         *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of          *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
+ *   GNU General Public License for more details.                            *
+ *                                                                           *
+ *   You should have received a copy of the GNU General Public License       *
+ *   along with this program; if not, write to the                           *
+ *   Free Software Foundation, Inc.,                                         *
+ *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .          *
+ *****************************************************************************/
+
 #ifndef FUNCTION_H
 #define FUNCTION_H
 #include<mainwindow.h>
@@ -47,7 +67,7 @@ void MainWindow::initPen()
     en=boy;
    // boy=40;
     //en=40;
-    kutuHeight=boy*16.15;
+    kutuHeight=boy*17.0;
     kutuWidth=en*1;
 
      myZeminType=0;
@@ -141,8 +161,8 @@ void MainWindow::initPen()
         mySekilPenSize=_strmySekilPenSize.toInt();
         myZeminColor.setNamedColor(_strmyZeminColor.toString());
         myZeminType=_strmyZeminType.toInt();
-        gridYatay=_strgridYatay.toInt();
-        gridDikey=_strgridDikey.toInt();
+        scene->sceneGridYatay=_strgridYatay.toInt();
+        scene->sceneGridDikey=_strgridDikey.toInt();
        // myZeminColor.setAlpha(0);
         mySekilZeminColor.setAlpha(0);
         clock=_strclock.toInt();
@@ -177,13 +197,14 @@ else{
     myGridColor=QColor(128,128,128,128);
     mySekilPenSize=4;
     myZeminColor=QColor(0,0,0,0);
-    gridYatay=false;
-    gridDikey=false;
+    scene->sceneGridYatay=false;
+    scene->sceneGridDikey=false;
+    scene->sceneGuzelYazi=false;
     clock=true;
     myZeminType=0;
 
     kutuLeft=screenSize.width()-kutuWidth-screenSize.width()/100;
-    kutuTop=(screenSize.height() /2-kutuHeight/2);
+    kutuTop=(screenSize.height() /2-kutuHeight*0.55);
     copyState=false;
 
 }
@@ -208,6 +229,9 @@ else{
 
 void MainWindow::currentScreenModeSlot()
 {
+    //iconButton();
+    //buttonColorClear();
+
     if(screenDesktop==false) ekranButtonClick();
 
     if(screenClickDrm) screenClickButtonClick();
@@ -283,7 +307,6 @@ void MainWindow::currentScreenModeSlot()
     {
         //if(Scene::graphicsListHistoryBack.count()==0)geriAlButton->setEnabled(false);
     }
-
     if(currentScreenMode==Scene::Mode::IleriAlMode)
     {
 
@@ -357,7 +380,11 @@ void MainWindow::setGridSize(int size)
     int t = size * 2 - 1;
     this->myGridSize = t;
      gridSizePopLabel->setText("Grid Boyutu: "+QString::number(myGridSize)+"\t\t");
-   //  qDebug()<<myGridSize;
+    /// qDebug()<<"size:"<<myGridSize;
+     if(scene->sceneGridYatay) gridYatayButtonClick(scene->sceneGridYatay);
+     if(scene->sceneGridDikey) gridDikeyButtonClick(scene->sceneGridDikey);
+     if(scene->sceneGuzelYazi) zeminGuzelYaziButtonClick(scene->sceneGuzelYazi);
+
 }
 void MainWindow::setEraseSize(int size)
 {
@@ -369,11 +396,12 @@ void MainWindow::setEraseSize(int size)
 }
 void MainWindow::zamanlama()
 {
+    QTime time1 = QTime::currentTime();
     if(clock)
     {
         QFont ff( "Arial", 8, QFont::Bold);
         clockButton->setFont(ff);
-    QTime time1 = QTime::currentTime();
+
     QString text = time1.toString("hh:mm");
     clockButton->setText(text);
     }else
@@ -402,6 +430,37 @@ void MainWindow::zamanlama()
         if(ileriAlButton)
          ileriAlButton->setEnabled(false);
     }
+
+
+    if ((time1.second() % 5) == 0){
+       /// qDebug()<<"ekran işlemm";
+
+
+if(zamanlamastart!=0)
+{
+      QSize sSize = qApp->screens()[0]->size();
+      QGraphicsTextItem *text = new QGraphicsTextItem(".");
+      scene->addItem(text);
+      text->setPos(0, 0);
+      QGraphicsTextItem *text1 = new QGraphicsTextItem(".");
+      scene->addItem(text1);
+      text1->setPos(sSize.width()-2, sSize.height()-2);
+     //}
+
+      QPixmap pixmap(sSize.width(),sSize.height());
+      pixmap.fill(Qt::transparent);     // Start all pixels transparent
+      ///pixmap.fill(Qt::white);     // Start all pixels transparent
+      QPainter painter(&pixmap);
+      painter.setRenderHint(QPainter::Antialiasing);
+      scene->render(&painter); //scene.render
+      painter.setRenderHint(QPainter::Antialiasing, false);
+      painter.end();
+      pageList[sceneSayfaActiveNumber]->setIcon(QIcon(pixmap));////önemli
+}
+zamanlamastart=1;
+}
+
+
     //if(depo::historyNextCount>0) ileriAlButton->setEnabled(true);else ileriAlButton->setEnabled(false);
 
 
@@ -450,8 +509,8 @@ void MainWindow::timerCopySlot()
 
             QMessageBox messageBox(this);
             messageBox.setWindowFlags(flags);
-            messageBox.setText("Uyarı\t\t");
-            messageBox.setInformativeText("Beyaz Sayfada Açılsın mı?");
+            messageBox.setText("Uyarı\t\t\t");
+            messageBox.setInformativeText("Yeni Beyaz Sayfada Açılsın mı?");
             QAbstractButton *evetButton =messageBox.addButton(tr("Evet"), QMessageBox::ActionRole);
             QAbstractButton *hayirButton =messageBox.addButton(tr("Hayır"), QMessageBox::ActionRole);
             messageBox.setIcon(QMessageBox::Question);
@@ -464,8 +523,28 @@ void MainWindow::timerCopySlot()
             {
            /// int ret = msgBox.exec();
             ///if(ret==16384) zeminBeyazButtonClick();
-            if (messageBox.clickedButton() == evetButton) zeminBeyazButtonClick();
+            if (messageBox.clickedButton() == evetButton)
 
+            {
+                VERectangle* tempCopyModeItemToRectDraw=scene->tempCopyModeItemToRectDraw;
+                ekleSayfaButtonClick();///yeni scene eklendi değişim yapılacak
+                scene->addItem(tempCopyModeItemToRectDraw);
+                scene->graphicsList.append(tempCopyModeItemToRectDraw);
+                scene->graphicsListTemp.append(tempCopyModeItemToRectDraw);
+                scene->historyBack.append(tempCopyModeItemToRectDraw);
+                scene->historyBackAction.append("added");
+                zeminBeyazButtonClick();
+            }
+            if (messageBox.clickedButton() == hayirButton)
+            {
+                VERectangle* tempCopyModeItemToRectDraw=scene->tempCopyModeItemToRectDraw;
+                scene->addItem(tempCopyModeItemToRectDraw);
+                scene->graphicsList.append(tempCopyModeItemToRectDraw);
+                scene->graphicsListTemp.append(tempCopyModeItemToRectDraw);
+                scene->historyBack.append(tempCopyModeItemToRectDraw);
+                scene->historyBackAction.append("added");
+
+            }
             }
             FileCrud *fc=new FileCrud();
             fc->dosya="E-Tahta.copy.ini";
@@ -503,6 +582,8 @@ if(saniye>sr){
     sayac->setText("-00-");
     sayac->setStyleSheet("QLabel{color: rgb(0, 0, 0);}");
 }
+
+
 
 }
 
@@ -636,23 +717,27 @@ while(sr<=ss)
     }
 void MainWindow::ileriGeriSayfa()
 {
-    ileriGeriSayfaLabel->setText("  "+QString::number(sceneSayfaNumber+1)+"/"+QString::number(sceneSayfaActiveNumber+1));
+   /// qDebug()<<"ileri-geri-sayfa";
+    ///ileriGeriSayfaLabel->setText("  "+QString::number(sceneSayfaActiveNumber+1)+"/"+QString::number(sceneSayfaNumber+1));
 
 if(sceneSayfaNumber+1>1)
 {
-nextSayfaButton->show();
-backSayfaButton->show();
-ileriGeriSayfaLabel->show();
-delSayfaButton->show();
+///nextSayfaButton->show();
+///backSayfaButton->show();
+///ileriGeriSayfaLabel->show();
+delSayfaButton->setEnabled(true);
 //addSayfaButton->show();
 }
 else
 {
-    nextSayfaButton->hide();
-    backSayfaButton->hide();
-    ileriGeriSayfaLabel->hide();
-    delSayfaButton->hide();
+   /// nextSayfaButton->hide();
+   /// backSayfaButton->hide();
+    ///ileriGeriSayfaLabel->hide();
+    //delSayfaButton->hide();
+    delSayfaButton->setEnabled(false);
    // addSayfaButton->hide();
 }
+
+
 }
 #endif // FUNCTION_H

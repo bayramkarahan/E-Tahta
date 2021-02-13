@@ -17,6 +17,26 @@
  *   Free Software Foundation, Inc.,                                         *
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .          *
  *****************************************************************************/
+/*****************************************************************************
+ *   Copyright (C) 2020 by Bayram KARAHAN                                    *
+ *   <bayramk@gmail.com>                                                     *
+ *                                                                           *
+ *   This program is free software; you can redistribute it and/or modify    *
+ *   it under the terms of the GNU General Public License as published by    *
+ *   the Free Software Foundation; either version 3 of the License, or       *
+ *   (at your option) any later version.                                     *
+ *                                                                           *
+ *   This program is distributed in the hope that it will be useful,         *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of          *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
+ *   GNU General Public License for more details.                            *
+ *                                                                           *
+ *   You should have received a copy of the GNU General Public License       *
+ *   along with this program; if not, write to the                           *
+ *   Free Software Foundation, Inc.,                                         *
+ *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .          *
+ *****************************************************************************/
+
 #ifndef POPMENU_H
 #define POPMENU_H
 #include <QPdfWriter>
@@ -65,8 +85,8 @@ QMenu *MainWindow::ayarMenu()
        fc->fileWrite("myZeminColor="+myZeminColor.name());
        fc->fileWrite("mySekilPenSize="+QString::number(mySekilPenSize));
        fc->fileWrite("myZeminType="+QString::number(myZeminType));
-       fc->fileWrite("gridYatay="+QString::number(gridYatay));
-       fc->fileWrite("gridDikey="+QString::number(gridDikey));
+       fc->fileWrite("gridYatay="+QString::number(scene->sceneGridYatay));
+       fc->fileWrite("gridDikey="+QString::number(scene->sceneGridDikey));
        fc->fileWrite("clock="+QString::number(clock));
        fc->fileWrite("kutuLeft="+QString::number(kutuLeft));
        fc->fileWrite("kutuTop="+QString::number(kutuTop));
@@ -93,8 +113,8 @@ QMenu *MainWindow::ayarMenu()
        myGridColor=QColor(128,128,128,128);
        mySekilPenSize=4;
        myZeminColor=QColor(0,0,0,0);
-       gridYatay=false;
-       gridDikey=false;
+       scene->sceneGridYatay=false;
+       scene->sceneGridDikey=false;
        gizleGoster=true;
        screenDesktop=true;
        myZeminType=0;
@@ -102,118 +122,6 @@ QMenu *MainWindow::ayarMenu()
        kutuLeft=this->width()-kutuWidth-this->width()/100;
        kutuTop=(this->height() /2-kutuHeight/2);
        copyState=false;
-
-});
-   QPushButton *saatButton= new QPushButton;
-   saatButton->setFixedSize(e, b);
-   saatButton->setIconSize(QSize(e,b));
-   saatButton->setFlat(true);
-   saatButton->setIcon(QIcon(":icons/sayac.png"));
-
-   connect(saatButton, &QPushButton::clicked, [=]() {
-
-     // delete sayac;
-      // sayac=new QLCDNumber(this);
-      //  sayac->setFrameShape(QFrame::NoFrame);
-       //sayac->setSegmentStyle(QLCDNumber::Filled);
-      /* Qt::WindowFlags flags = 0;
-       flags |= Qt::Window;
-       flags |= Qt::X11BypassWindowManagerHint;
-       flags |= Qt::CustomizeWindowHint;
-       this->setWindowFlags(flags);
-
-
-       flags |= Qt::SplashScreen;
-       flags |= Qt::X11BypassWindowManagerHint;
-       flags |= Qt::WindowStaysOnTopHint;
-
-      QWidget *sayacWg=new QWidget();
-       sayacWg->resize(200,300);
-
-
-       sayacWg->setWindowFlags(flags);
-sayacWg->show();
-*/
-
-sayacStartButton= new QPushButton(this);
-sayacStartButton->hide();
-sayacCloseButton= new QPushButton(this);
-sayacCloseButton->hide();
-
-       sayac=new QLabel(this);
-          // kalemKalinlik();
-           sayac->hide();
-           sure=new QSpinBox(this);
-           sure->setStyleSheet(
-                       "QSpinBox { border: 3px solid gray; border-radius: 5px; min-height: 150px; min-width: 150px; }"
-                       "QSpinBox::up-arrow { border-left: 17px solid none;"
-                       "border-right: 17px solid none; border-bottom: 17px solid black; width: 0px; height: 0px; }"
-                       "QSpinBox::up-arrow:hover { border-left: 17px solid none; "
-                       "border-right: 17px solid none; border-bottom: 17px solid black; width: 0px; height: 0px; }"
-                       "QSpinBox::up-button { min-width: 80px; min-height: 77px; background-color: gray; }"
-                       "QSpinBox::up-button:hover { min-width: 80px; min-height: 77px; background-color: gray; }"
-                       "QSpinBox::down-arrow { border-left: 17px solid none;"
-                       "border-right: 17px solid none; border-top: 17px solid black; width: 0px; height: 0px; }"
-
-
-                       "QSpinBox::down-arrow:hover { border-left: 17px solid none;"
-                       "border-right: 17px solid none; border-top: 17px solid black; width: 0px; height: 0px; }"
-                       "QSpinBox::down-button { min-width: 80px; min-height: 77px; background-color: gray; }"
-                       "QSpinBox::down-button:hover { min-width: 80px; min-height: 77px; background-color: gray; }"
-
-                       );
-           sure->hide();
-           bar=new QProgressBar(this);
-           bar->hide();
-
-
-       sayac->move(this->width()/2-250,this->height()/2-250);
-       sayac->resize(500, 500);
-       sayac->show();
-       bar->show();
-       //sure->hide();
-
-       sure->move(this->width()/2-250,this->height()/2+170);
-       sure->resize(200, 50);
-       sure->setValue(30);
-       sure->show();
-        sayacStartButton->setFixedSize(e*2, b*3);
-       sayacStartButton->setIconSize(QSize(e*2,b*3));
-       sayacStartButton->setFlat(true);
-       sayacStartButton->setIcon(QIcon(":icons/sayacplay.png"));
-       sayacStartButton->move(this->width()/2-50,this->height()/2+200);
-       sayacStartButton->show();
-       bar->move(this->width()/2-250,this->height()/2-250);
-       bar->resize(500, 50);
-       connect(sayacStartButton, &QPushButton::clicked, [=]() {
-
-           saniye=0;
-           saat->start(1000);
-           //delete sure;
-           sure->hide();
-           sayacStartButton->hide();
-          // bar->hide();
-          // sayacCloseButton->hide();
-           bar->setMaximum(sure->value()*60);
-
-
-
-
-});
-          sayacCloseButton->setFixedSize(e*2, b*3);
-       sayacCloseButton->setIconSize(QSize(e*2,b*3));
-       sayacCloseButton->setFlat(true);
-       sayacCloseButton->setIcon(QIcon(":icons/sayacstop.png"));
-       sayacCloseButton->move(this->width()/2+100,this->height()/2+200);
-       sayacCloseButton->show();
-       connect(sayacCloseButton, &QPushButton::clicked, [=]() {
-          saat->stop();
-                 sayac->hide();
-           sure->hide();
-             bar->hide();
-           sayacStartButton->hide();
-           sayacCloseButton->hide();
-});
 
 });
 
@@ -228,7 +136,7 @@ sayacCloseButton->hide();
 
     layout->addWidget(saveProfileButton,5,1 ,1,1,Qt::AlignHCenter);
     layout->addWidget(loadDefaultProfileButton, 5,2 ,1,1,Qt::AlignHCenter);
-    layout->addWidget(saatButton, 5, 3,1,1,Qt::AlignHCenter);
+  ///  layout->addWidget(saatButton, 5, 3,1,1,Qt::AlignHCenter);
   //  layout->addWidget(kalemKapatButton, 7,1,1,1);
     layout->addWidget(new QLabel("<font size=1>Klavye</font>"),3,1,1,1,Qt::AlignHCenter);
     layout->addWidget(new QLabel("<font size=1>Taşı</font>"),3,2,1,1,Qt::AlignHCenter);
@@ -237,7 +145,7 @@ sayacCloseButton->hide();
     layout->addWidget(new QLabel("<font size=1>Ayarları Kaydet</font>"),6,1,1,1,Qt::AlignHCenter);
     layout->addWidget(new QLabel("<font size=1>Öntanımlı Ayarlar</font>"),6,2,1,1,Qt::AlignHCenter);
 
-    layout->addWidget(new QLabel("<font size=1>Sayaç</font>"),6,3,1,1,Qt::AlignHCenter);
+ ///   layout->addWidget(new QLabel("<font size=1>Sayaç</font>"),6,3,1,1,Qt::AlignHCenter);
     QCheckBox *checkbox = new QCheckBox("Kopyalama Yeni Sayfada Açılsın", menu);
     QFont ff( "Arial", 8, QFont::Normal);
     checkbox->setFont(ff);
@@ -341,6 +249,7 @@ QMenu *MainWindow::sekilMenu()
     //ken=300;
     int e=(en*0.8)/4*9;
     int b=(boy*0.6)/4*5;
+    e=e/2;
     QMenu *menu = new QMenu(this);
    // QLabel *sekilLabel= new QLabel();
    // sekilLabel->setText("Geometrik Şekiller");
@@ -378,6 +287,143 @@ QMenu *MainWindow::sekilMenu()
    // penStyleDotLine->setFlat(true);
     connect(penStyleDotLine, &QPushButton::clicked, [=]() {setSekilPenStyle(Qt::DotLine);});
 /********************************************************************/
+    /***********************pergel cetvel gönye iletki***************/
+
+
+    QPushButton *pergel = new QPushButton;
+    pergel->setFixedSize(e, b);
+    pergel->setIconSize(QSize(e,b));
+    //penStyleSolidLine->setFlat(true);
+    pergel->setIcon(QIcon(":icons/pergel.png"));
+    connect(pergel, &QPushButton::clicked, [=]() {
+        setSekilType(DiagramItem::DiagramType::Pergel);
+    //QPixmap pm=QPixmap(":icons/pergel.png").scaled(200,50,Qt::IgnoreAspectRatio,Qt::SmoothTransformation);
+        scene->setImage(QPixmap(":icons/pergel.png"));
+        scene->setMode(Scene::Mode::DrawRectangle, DiagramItem::DiagramType::Pergel);
+      scene->donSlot();
+        menu->close();
+    });
+
+    QPushButton *cetvel = new QPushButton;
+    cetvel->setIcon(QIcon(":icons/cetvel.png"));
+    cetvel->setFixedSize(e, b);
+    cetvel->setIconSize(QSize(e,b));
+    //penStyleDashLine->setFlat(true);
+    connect(cetvel, &QPushButton::clicked, [=]() {
+        setSekilType(DiagramItem::DiagramType::Cetvel);
+        scene->setImage(QPixmap(":icons/cetvel.png"));
+        scene->setMode(Scene::Mode::DrawRectangle, DiagramItem::DiagramType::Cetvel);
+         scene->donSlot();
+        menu->close();
+
+    });
+
+    QPushButton *gonye = new QPushButton;
+    gonye->setIcon(QIcon(":icons/gonye.png"));
+    gonye->setFixedSize(e, b);
+    gonye->setIconSize(QSize(e,b));
+    // penStyleDotLine->setFlat(true);
+    connect(gonye, &QPushButton::clicked, [=]() {
+        setSekilType(DiagramItem::DiagramType::Gonye);
+        scene->setImage(QPixmap(":icons/gonye.png"));
+        scene->setMode(Scene::Mode::DrawRectangle, DiagramItem::DiagramType::Gonye);
+          scene->donSlot();
+        menu->close();
+
+    });
+
+    QPushButton *iletki = new QPushButton;
+    iletki->setIcon(QIcon(":icons/iletki.png"));
+    iletki->setFixedSize(e, b);
+    iletki->setIconSize(QSize(e,b));
+    // penStyleDotLine->setFlat(true);
+    connect(iletki, &QPushButton::clicked, [=]() {
+        setSekilType(DiagramItem::DiagramType::Iletki);
+        scene->setImage(QPixmap(":icons/iletki.png"));
+        scene->setMode(Scene::Mode::DrawRectangle, DiagramItem::DiagramType::Iletki);
+         scene->donSlot();
+        menu->close();
+
+    });
+    QHBoxLayout *layout1 = new QHBoxLayout;
+    layout1->addWidget(pergel);
+    layout1->addWidget(cetvel);
+    layout1->addWidget(gonye);
+    layout1->addWidget(iletki);
+   /* QHBoxLayout *layout2 = new QHBoxLayout;
+    layout2->addWidget(new QLabel("<font size=1>Pergel</font>"));
+    layout2->addWidget(new QLabel("<font size=1>Cetvel</font>"));
+    layout2->addWidget(new QLabel("<font size=1>Gönye</font>"));
+    layout2->addWidget(new QLabel("<font size=1>İletki</font>"));
+*/
+
+/********************************************************************/
+    /***********************küp silindir küre pramid***************/
+
+
+    QPushButton *kup = new QPushButton;
+    kup->setFixedSize(e, b);
+    kup->setIconSize(QSize(e,b));
+    //penStyleSolidLine->setFlat(true);
+    kup->setIcon(QIcon(":icons/kup.svg"));
+    connect(kup, &QPushButton::clicked, [=]() {
+        setSekilType(DiagramItem::DiagramType::Kup);
+
+        scene->setImage(QPixmap(":icons/kup.svg"));
+        scene->setMode(Scene::Mode::DrawRectangle, DiagramItem::DiagramType::Kup);
+
+         menu->close();
+    });
+
+    QPushButton *silindir = new QPushButton;
+    silindir->setIcon(QIcon(":icons/silindir.svg"));
+    silindir->setFixedSize(e, b);
+    silindir->setIconSize(QSize(e,b));
+    //penStyleDashLine->setFlat(true);
+    connect(silindir, &QPushButton::clicked, [=]() {
+        setSekilType(DiagramItem::DiagramType::Silindir);
+        scene->setImage(QPixmap(":icons/silindir.svg"));
+        scene->setMode(Scene::Mode::DrawRectangle, DiagramItem::DiagramType::Silindir);
+         menu->close();
+
+    });
+
+    QPushButton *pramit = new QPushButton;
+    pramit->setIcon(QIcon(":icons/pramit.svg"));
+    pramit->setFixedSize(e, b);
+    pramit->setIconSize(QSize(e,b));
+    // penStyleDotLine->setFlat(true);
+    connect(pramit, &QPushButton::clicked, [=]() {
+        setSekilType(DiagramItem::DiagramType::Pramit);
+        scene->setImage(QPixmap(":icons/pramit.svg"));
+        scene->setMode(Scene::Mode::DrawRectangle, DiagramItem::DiagramType::Pramit);
+        menu->close();
+
+    });
+
+    QPushButton *kure = new QPushButton;
+    kure->setIcon(QIcon(":icons/kure.svg"));
+    kure->setFixedSize(e, b);
+    kure->setIconSize(QSize(e,b));
+    // penStyleDotLine->setFlat(true);
+    connect(kure, &QPushButton::clicked, [=]() {
+        setSekilType(DiagramItem::DiagramType::Kure);
+        scene->setImage(QPixmap(":icons/kure.svg"));
+        scene->setMode(Scene::Mode::DrawRectangle, DiagramItem::DiagramType::Kure);
+        menu->close();
+
+    });
+    QHBoxLayout *layout2 = new QHBoxLayout;
+    layout2->addWidget(kup);
+    layout2->addWidget(silindir);
+    layout2->addWidget(pramit);
+    layout2->addWidget(kure);
+   /* QHBoxLayout *layout2 = new QHBoxLayout;
+    layout2->addWidget(new QLabel("<font size=1>Pergel</font>"));
+    layout2->addWidget(new QLabel("<font size=1>Cetvel</font>"));
+    layout2->addWidget(new QLabel("<font size=1>Gönye</font>"));
+    layout2->addWidget(new QLabel("<font size=1>İletki</font>"));
+*/
 
   //  DiagramItem *ditem=new DiagramItem();
 
@@ -570,41 +616,49 @@ QMenu *MainWindow::sekilMenu()
     resimEkle->setFlat(true);
     resimEkle->setIcon(QIcon(":/icons/addimage.png"));
     connect(resimEkle, &QPushButton::clicked, [=]() {
-        QStringList arguments;
-        arguments << "-c" << "echo $HOME";
-        QProcess process;
-        process.start("/bin/bash",arguments);
-        process.waitForFinished(-1); // will wait forever until finished
-        QString stdout = process.readAllStandardOutput();
-        stdout.chop(1);
-     stdout.append(QString("/Masaüstü/"));
-     /*******************************************/
-      Qt::WindowFlags flags = 0;
-     flags |= Qt::Window;
-     flags |= Qt::X11BypassWindowManagerHint;
-     flags |= Qt::CustomizeWindowHint;
-     this->setWindowFlags(flags);
+        Qt::WindowFlags flags = 0;
+        flags |= Qt::Window;
+        flags |= Qt::X11BypassWindowManagerHint;
+        flags |= Qt::CustomizeWindowHint;
+        this->setWindowFlags(flags);
 
+        flags |= Qt::SplashScreen;
+        flags |= Qt::X11BypassWindowManagerHint;
+        flags |= Qt::WindowStaysOnTopHint;
+        QFileDialog abc;
+        abc.setWindowFlags(flags);
 
-     flags |= Qt::SplashScreen;
-     flags |= Qt::X11BypassWindowManagerHint;
-     flags |= Qt::WindowStaysOnTopHint;
-     QFileDialog abc;
-     abc.setWindowFlags(flags);
-     /****************************************************/
-    QString fileName =abc.getOpenFileName(this,
-             tr("Resim Aç jpg png bmp"), stdout, tr("Image Files (*.png *.jpg *.bmp)"));
-    //qDebug() <<fileName;
-    /************************************/
-    flags |= Qt::Window;
-    flags |= Qt::X11BypassWindowManagerHint;
-    flags |= Qt::WindowStaysOnTopHint;
-    this->setWindowFlags(flags);
-    show();
+        abc.setWindowFlags(flags);
+        if(QSysInfo::kernelType()=="linux"){
+            QString fileName = abc.getOpenFileName(this,
+                                                   tr("Resim Aç jpg png bmp"), QDir::homePath()+"/Masaüstü", tr("Image Files (*.png *.jpg *.bmp)"));
+            // qDebug()<<fileName;
+            if(fileName!="")
+            {
+                QPixmap image = QPixmap(fileName);
+                scene->setImage(image);
+                scene->setMode(Scene::Mode::DrawRectangle, DiagramItem::DiagramType::Resim);
+            }
+
+        }
+        else
+        {//windows
+            QString fileName = abc.getOpenFileName(this,
+                                                   tr("Resim Aç jpg png bmp"), QDir::homePath()+"/desktop", tr("Image Files (*.png *.jpg *.bmp)"));
+            if(fileName!="")
+            {
+                QPixmap image = QPixmap(fileName);
+                scene->setImage(image);
+                scene->setMode(Scene::Mode::DrawRectangle, DiagramItem::DiagramType::Resim);
+            }
+
+        }
+        flags |= Qt::Window;
+        flags |= Qt::X11BypassWindowManagerHint;
+        flags |= Qt::WindowStaysOnTopHint;
+        this->setWindowFlags(flags);
+        show();
 /***************************************/
-        QPixmap image = QPixmap(fileName);
-        scene->setImage(image);
-         scene->setMode(Scene::Mode::DrawRectangle, DiagramItem::DiagramType::Resim);
 
          menu->close();
     });
@@ -631,48 +685,57 @@ QMenu *MainWindow::sekilMenu()
     layout->addWidget(new QLabel("<font size=1>Kesik Çizgi</font>"),4,2,1,1,Qt::AlignHCenter);
     layout->addWidget(new QLabel("<font size=1>Noktalı Çizgi</font>"),4,3,1,1,Qt::AlignHCenter);
 
+    layout->addLayout(layout1, 5, 1,1,3,Qt::AlignHCenter);
+   layout->addLayout(layout2, 6, 1,1,3,Qt::AlignHCenter);
+   // layout->addWidget(pergel, 5, 1,1,1,Qt::AlignHCenter);
+   // layout->addWidget(cetvel, 5, 2,1,1,Qt::AlignHCenter);
+   // layout->addWidget(gonye, 5, 3,1,1,Qt::AlignHCenter);
+   // layout->addWidget(new QLabel("<font size=1>Pergel</font>"),6,1,1,1,Qt::AlignHCenter);
+   // layout->addWidget(new QLabel("<font size=1>Cetvel</font>"),6,2,1,1,Qt::AlignHCenter);
+    //layout->addWidget(new QLabel("<font size=1>Gönye</font>"),6,3,1,1,Qt::AlignHCenter);
 
-    layout->addWidget(sekilKalemRenkButton, 5, 1,1,1,Qt::AlignHCenter);
-    layout->addWidget(resimEkle, 5, 2,1,1,Qt::AlignHCenter);
-    layout->addWidget(sekilZeminRenkButton, 5, 3,1,1,Qt::AlignHCenter);
-    layout->addWidget(new QLabel("<font size=1>Kenar R.</font>"),6,1,1,1,Qt::AlignHCenter);
-    layout->addWidget(new QLabel("<font size=1>Resim Ekle</font>"),6,2,1,1,Qt::AlignHCenter);
-    layout->addWidget(new QLabel("<font size=1>Zemin Rengi</font>"),6,3,1,1,Qt::AlignHCenter);
 
-    layout->addWidget(cizgi, 8, 1,1,1,Qt::AlignHCenter);
-    layout->addWidget(ok, 8, 2,1,1,Qt::AlignHCenter);
-    layout->addWidget(ciftok, 8, 3,1,1,Qt::AlignHCenter);
-    layout->addWidget(new QLabel("<font size=1>Çizgi</font>"),9,1,1,1,Qt::AlignHCenter);
-    layout->addWidget(new QLabel("<font size=1>Ok</font>"),9,2,1,1,Qt::AlignHCenter);
-    layout->addWidget(new QLabel("<font size=1>Çift Ok</font>"),9,3,1,1,Qt::AlignHCenter);
+    layout->addWidget(sekilKalemRenkButton, 10, 1,1,1,Qt::AlignHCenter);
+    layout->addWidget(resimEkle, 10, 2,1,1,Qt::AlignHCenter);
+    layout->addWidget(sekilZeminRenkButton, 10, 3,1,1,Qt::AlignHCenter);
+    layout->addWidget(new QLabel("<font size=1>Kenar R.</font>"),11,1,1,1,Qt::AlignHCenter);
+    layout->addWidget(new QLabel("<font size=1>Resim Ekle</font>"),11,2,1,1,Qt::AlignHCenter);
+    layout->addWidget(new QLabel("<font size=1>Zemin Rengi</font>"),11,3,1,1,Qt::AlignHCenter);
 
-    layout->addWidget(ucgen, 10, 1,1,1,Qt::AlignHCenter);
-    layout->addWidget(dortgen, 10, 2,1,1,Qt::AlignHCenter);
-    layout->addWidget(cember, 10, 3,1,1,Qt::AlignHCenter);
-    layout->addWidget(new QLabel("<font size=1>Üçgen</font>"),11,1,1,1,Qt::AlignHCenter);
-    layout->addWidget(new QLabel("<font size=1>Dörtgen</font>"),11,2,1,1,Qt::AlignHCenter);
-    layout->addWidget(new QLabel("<font size=1>Çember</font>"),11,3,1,1,Qt::AlignHCenter);
+    layout->addWidget(cizgi, 13, 1,1,1,Qt::AlignHCenter);
+    layout->addWidget(ok, 13, 2,1,1,Qt::AlignHCenter);
+    layout->addWidget(ciftok, 13, 3,1,1,Qt::AlignHCenter);
+    layout->addWidget(new QLabel("<font size=1>Çizgi</font>"),14,1,1,1,Qt::AlignHCenter);
+    layout->addWidget(new QLabel("<font size=1>Ok</font>"),14,2,1,1,Qt::AlignHCenter);
+    layout->addWidget(new QLabel("<font size=1>Çift Ok</font>"),14,3,1,1,Qt::AlignHCenter);
 
-    layout->addWidget(baklava, 15, 1,1,1,Qt::AlignHCenter);
-    layout->addWidget(yamuk, 15, 2,1,1,Qt::AlignHCenter);
-    layout->addWidget(besgen, 15, 3,1,1,Qt::AlignHCenter);
-    layout->addWidget(new QLabel("<font size=1>Baklava</font>"),16,1,1,1,Qt::AlignHCenter);
-    layout->addWidget(new QLabel("<font size=1>Yamuk</font>"),16,2,1,1,Qt::AlignHCenter);
-    layout->addWidget(new QLabel("<font size=1>Beşgen</font>"),16,3,1,1,Qt::AlignHCenter);
+    layout->addWidget(ucgen, 15, 1,1,1,Qt::AlignHCenter);
+    layout->addWidget(dortgen, 15, 2,1,1,Qt::AlignHCenter);
+    layout->addWidget(cember, 15, 3,1,1,Qt::AlignHCenter);
+    layout->addWidget(new QLabel("<font size=1>Üçgen</font>"),16,1,1,1,Qt::AlignHCenter);
+    layout->addWidget(new QLabel("<font size=1>Dörtgen</font>"),16,2,1,1,Qt::AlignHCenter);
+    layout->addWidget(new QLabel("<font size=1>Çember</font>"),16,3,1,1,Qt::AlignHCenter);
 
-    layout->addWidget(altigen, 20, 1,1,1,Qt::AlignHCenter);
-    layout->addWidget(sekizgen, 20, 2,1,1,Qt::AlignHCenter);
-    layout->addWidget(dikucgen, 20, 3,1,1,Qt::AlignHCenter);
-    layout->addWidget(new QLabel("<font size=1>Altıgen</font>"),21,1,1,1,Qt::AlignHCenter);
-    layout->addWidget(new QLabel("<font size=1>Sekizgen</font>"),21,2,1,1,Qt::AlignHCenter);
-    layout->addWidget(new QLabel("<font size=1>Dik Üçgen</font>"),21,3,1,1,Qt::AlignHCenter);
+    layout->addWidget(baklava, 20, 1,1,1,Qt::AlignHCenter);
+    layout->addWidget(yamuk, 20, 2,1,1,Qt::AlignHCenter);
+    layout->addWidget(besgen, 20, 3,1,1,Qt::AlignHCenter);
+    layout->addWidget(new QLabel("<font size=1>Baklava</font>"),21,1,1,1,Qt::AlignHCenter);
+    layout->addWidget(new QLabel("<font size=1>Yamuk</font>"),21,2,1,1,Qt::AlignHCenter);
+    layout->addWidget(new QLabel("<font size=1>Beşgen</font>"),21,3,1,1,Qt::AlignHCenter);
 
-    layout->addWidget(guzelyazi, 25, 1,1,1,Qt::AlignHCenter);
-    layout->addWidget(muzik, 25, 2,1,1,Qt::AlignHCenter);
-    layout->addWidget(cizgilisayfa, 25, 3,1,1,Qt::AlignHCenter);
-    layout->addWidget(new QLabel("<font size=1>G.Yazı</font>"),26,1,1,1,Qt::AlignHCenter);
-    layout->addWidget(new QLabel("<font size=1>Müzik</font>"),26,2,1,1,Qt::AlignHCenter);
-    layout->addWidget(new QLabel("<font size=1>Çizgili Sayfa</font>"),26,3,1,1,Qt::AlignHCenter);
+    layout->addWidget(altigen, 25, 1,1,1,Qt::AlignHCenter);
+    layout->addWidget(sekizgen, 25, 2,1,1,Qt::AlignHCenter);
+    layout->addWidget(dikucgen, 25, 3,1,1,Qt::AlignHCenter);
+    layout->addWidget(new QLabel("<font size=1>Altıgen</font>"),26,1,1,1,Qt::AlignHCenter);
+    layout->addWidget(new QLabel("<font size=1>Sekizgen</font>"),26,2,1,1,Qt::AlignHCenter);
+    layout->addWidget(new QLabel("<font size=1>Dik Üçgen</font>"),26,3,1,1,Qt::AlignHCenter);
+
+    layout->addWidget(guzelyazi, 29, 1,1,1,Qt::AlignHCenter);
+    layout->addWidget(muzik, 29, 2,1,1,Qt::AlignHCenter);
+    layout->addWidget(cizgilisayfa, 29, 3,1,1,Qt::AlignHCenter);
+    layout->addWidget(new QLabel("<font size=1>G.Yazı</font>"),30,1,1,1,Qt::AlignHCenter);
+    layout->addWidget(new QLabel("<font size=1>Müzik</font>"),30,2,1,1,Qt::AlignHCenter);
+    layout->addWidget(new QLabel("<font size=1>Çizgili Sayfa</font>"),30,3,1,1,Qt::AlignHCenter);
 
  //   layout->setColumnStretch(10, 255);
     // add a widget action to the context menu
@@ -948,7 +1011,7 @@ QMenu *MainWindow::zeminMenu()
     zeminBeyazButton->setFixedSize(e, b);zeminBeyazButton->setIconSize(QSize(e,b));
     gridYatayButton->setFixedSize(e, b);gridYatayButton->setIconSize(QSize(e,b));
     gridDikeyButton->setFixedSize(e, b);gridDikeyButton->setIconSize(QSize(e,b));
-    gridOnOffButton->setFixedSize(e, b);gridOnOffButton->setIconSize(QSize(e,b));
+    gridDisableButton->setFixedSize(e, b);gridDisableButton->setIconSize(QSize(e,b));
     zeminCustomColorButton->setFixedSize(e, b);zeminCustomColorButton->setIconSize(QSize(e,b));
     zeminMuzikButton->setFixedSize(e, b);zeminMuzikButton->setIconSize(QSize(e,b));
     zeminGuzelYaziButton->setFixedSize(e, b);zeminGuzelYaziButton->setIconSize(QSize(e,b));
@@ -963,27 +1026,28 @@ QMenu *MainWindow::zeminMenu()
     zeminCizgiliSayfaButton->setFlat(true);
     connect(zeminCizgiliSayfaButton, &QPushButton::clicked, [=]()
     {
-        gridOnOffButtonClick();
+          myZeminColor=QColor(0,0,0,0);
+        gridDisableButtonClick();
         DiagramItem *ditem=new DiagramItem();
         mySekilType=DiagramItem::DiagramType::CizgiliSayfa;
         QPixmap pim(zeminImage(ditem->sekilStore(mySekilType,QRectF(QPointF(0,0),QPointF(this->width(),this->height()))),this->width(),this->height(),myGridColor,2));
-        scene->setBackgroundBrush(pim);
+        scene->setForegroundBrush(pim);
 
         //setSekilPenStyle(Qt::DashLine);
     });
-    QPushButton *zeminTemizleButton = new QPushButton;
+/*    QPushButton *zeminTemizleButton = new QPushButton;
     zeminTemizleButton->setIcon(QIcon(":icons/zeminTemizle.png"));
     zeminTemizleButton->setFixedSize(e, b);
     zeminTemizleButton->setIconSize(QSize(e,b));
     zeminTemizleButton->setFlat(true);
     connect(zeminTemizleButton, &QPushButton::clicked, [=]()
     {
-       scene->setBackgroundBrush(QColor(0,0,0,0));
+       scene->setForegroundBrush(QColor(0,0,0,0));
         scene->setPopMenuStatus(false);
       //  menu->close();
-        gridOnOffButtonClick();
+      //  gridOnOffButtonClick();
 
-    });
+    });*/
 
     QPushButton *gridRenkButton = new QPushButton;
     gridRenkButton->setIcon(QIcon(":icons/gridRenk.png"));
@@ -997,37 +1061,30 @@ QMenu *MainWindow::zeminMenu()
     connect(gridRenkButton, &QPushButton::clicked, [=]()
     {
         scene->setPopMenuStatus(false);
-      //  menu->close();
+
         Qt::WindowFlags flags = 0;
-        flags |= Qt::Window;
+        flags |= Qt::Dialog;
         flags |= Qt::X11BypassWindowManagerHint;
-        flags |= Qt::CustomizeWindowHint;
-        this->setWindowFlags(flags);
-
-
-        flags |= Qt::SplashScreen;
-        flags |= Qt::X11BypassWindowManagerHint;
-        flags |= Qt::WindowStaysOnTopHint;
-        QColorDialog abc;
+        QColorDialog abc(this);
         abc.setWindowFlags(flags);
+        abc.setCurrentColor(myGridColor);
+        abc.exec();
 
-
-        QColor newColor = abc.getColor(myGridColor);
-        if (newColor.isValid())
+        QColor newColor = abc.selectedColor();
+         if (newColor.isValid())
           {
-          //  setZeminColor(newColor);
+            /// qDebug()<<"renk seçildi"<<scene->sceneGridYatay<<scene->sceneGridDikey<<scene->sceneGuzelYazi;
             myGridColor = QColor(newColor.red(),newColor.green(),newColor.blue(),128);
             palette->setColor(QPalette::Button, myGridColor);
             gridRenkButton->setPalette(*palette);
+            gridRenkButton->setAutoFillBackground(true);
             gridRenkButton->update();
-               }
-        flags |= Qt::Window;
-        flags |= Qt::X11BypassWindowManagerHint;
-        flags |= Qt::WindowStaysOnTopHint;
-    this->setWindowFlags(flags);
-    show();
+            if(scene->sceneGridYatay) gridYatayButtonClick(scene->sceneGridYatay);
+            if(scene->sceneGridDikey) gridDikeyButtonClick(scene->sceneGridDikey);
+            if(scene->sceneGuzelYazi) zeminGuzelYaziButtonClick(scene->sceneGuzelYazi);
 
-        //setSekilPenStyle(Qt::DashLine);
+               }
+
     });
 
     connect(zeminSeffafButton, &QPushButton::clicked, [=](){scene->setPopMenuStatus(false);/* menu->close();*/});
@@ -1037,11 +1094,11 @@ QMenu *MainWindow::zeminMenu()
     connect(zeminCizgiliSayfaButton, &QPushButton::clicked, [=](){scene->setPopMenuStatus(false);/* menu->close();*/});
     connect(zeminMuzikButton, &QPushButton::clicked, [=](){scene->setPopMenuStatus(false);/* menu->close();*/});
     connect(zeminGuzelYaziButton, &QPushButton::clicked, [=](){scene->setPopMenuStatus(false);/* menu->close();*/});
-    connect(zeminTemizleButton, &QPushButton::clicked, [=](){scene->setPopMenuStatus(false);/* menu->close();*/});
+  ///  connect(zeminTemizleButton, &QPushButton::clicked, [=](){scene->setPopMenuStatus(false);/* menu->close();*/});
     connect(gridRenkButton, &QPushButton::clicked, [=](){scene->setPopMenuStatus(false);/* menu->close();*/});
     connect(gridYatayButton, &QPushButton::clicked, [=](){scene->setPopMenuStatus(false);/* menu->close();*/});
     connect(gridDikeyButton, &QPushButton::clicked, [=](){scene->setPopMenuStatus(false);/* menu->close();*/});
-    connect(gridOnOffButton, &QPushButton::clicked, [=](){scene->setPopMenuStatus(false);/* menu->close();*/});
+    connect(gridDisableButton, &QPushButton::clicked, [=](){scene->setPopMenuStatus(false);/* menu->close();*/});
 
     layout->addWidget(zeminLabel, 0, 1,1,3);
     layout->addWidget(gridSizePopLabel, 1, 1,1,3);
@@ -1054,34 +1111,34 @@ QMenu *MainWindow::zeminMenu()
     layout->addWidget(new QLabel("<font size=1>Şeffaf Tahta</font>"),3,1,1,1,Qt::AlignHCenter);
     layout->addWidget(new QLabel("<font size=1>Siyah Tahta</font>"),3,2,1,1,Qt::AlignHCenter);
     layout->addWidget(new QLabel("<font size=1>Beyaz Tahta</font>"),3,3,1,1,Qt::AlignHCenter);
-    layout->addWidget(new QLabel("<font size=1>Renk Seç</font>"),3,4,1,1,Qt::AlignHCenter);
+    layout->addWidget(new QLabel("<font size=1>Zemin Rengi Seç</font>"),3,4,1,1,Qt::AlignHCenter);
 
 
     layout->addWidget(zeminCizgiliSayfaButton,5,1,1,1,Qt::AlignHCenter);
     layout->addWidget(zeminMuzikButton,5,2,1,1,Qt::AlignHCenter);
     layout->addWidget(zeminGuzelYaziButton,5,3,1,1,Qt::AlignHCenter);
-    layout->addWidget(zeminTemizleButton,5,4,1,1,Qt::AlignHCenter);
+    layout->addWidget(openButton,5,4,1,1,Qt::AlignHCenter);
 
     layout->addWidget(new QLabel("<font size=1>Çizgi Deseni</font>"),6,1,1,1,Qt::AlignHCenter);
     layout->addWidget(new QLabel("<font size=1>Müzik Deseni</font>"),6,2,1,1,Qt::AlignHCenter);
     layout->addWidget(new QLabel("<font size=1>Güzelyazı</font>"),6,3,1,1,Qt::AlignHCenter);
-    layout->addWidget(new QLabel("<font size=1>Desen Temizle</font>"),6,4,1,1,Qt::AlignHCenter);
+    layout->addWidget(new QLabel("<font size=1>Desen Resim Ekle</font>"),6,4,1,1,Qt::AlignHCenter);
 
     layout->addWidget(penSize,10,1,1,4,Qt::AlignHCenter);
 
     layout->addWidget(gridRenkButton,15,1,1,1,Qt::AlignHCenter);
     layout->addWidget(gridYatayButton,15,2,1,1,Qt::AlignHCenter);
     layout->addWidget(gridDikeyButton,15,3,1,1,Qt::AlignHCenter);
-    layout->addWidget(gridOnOffButton,15,4,1,1,Qt::AlignHCenter);
-    layout->addWidget(new QLabel("<font size=1>Çizgi</font>"),16,1,1,1,Qt::AlignHCenter);
+    layout->addWidget(gridDisableButton,15,4,1,1,Qt::AlignHCenter);
+    layout->addWidget(new QLabel("<font size=1>Çizgi Rengi Seç</font>"),16,1,1,1,Qt::AlignHCenter);
     layout->addWidget(new QLabel("<font size=1>Yatay Çizgi</font>"),16,2,1,1,Qt::AlignHCenter);
     layout->addWidget(new QLabel("<font size=1>Dikey Çizgi</font>"),16,3,1,1,Qt::AlignHCenter);
     layout->addWidget(new QLabel("<font size=1>Çizgi Temizle</font>"),16,4,1,1,Qt::AlignHCenter);
 
     //openButton->show();
     //openButton->resize(e,b);
-    layout->addWidget( openButton,17,2,1,1,Qt::AlignHCenter);
-    layout->addWidget(new QLabel("<font size=1>Resim Ekle</font>"),18,2,1,1,Qt::AlignHCenter);
+   // layout->addWidget( openButton,17,2,1,1,Qt::AlignHCenter);
+   // layout->addWidget(new QLabel("<font size=1>Resim Ekle</font>"),18,2,1,1,Qt::AlignHCenter);
 
     //layout->setColumnStretch(6, 255);
     // add a widget action to the context menu
