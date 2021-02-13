@@ -17,6 +17,26 @@
  *   Free Software Foundation, Inc.,                                         *
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .          *
  *****************************************************************************/
+/*****************************************************************************
+ *   Copyright (C) 2020 by Bayram KARAHAN                                    *
+ *   <bayramk@gmail.com>                                                     *
+ *                                                                           *
+ *   This program is free software; you can redistribute it and/or modify    *
+ *   it under the terms of the GNU General Public License as published by    *
+ *   the Free Software Foundation; either version 3 of the License, or       *
+ *   (at your option) any later version.                                     *
+ *                                                                           *
+ *   This program is distributed in the hope that it will be useful,         *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of          *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
+ *   GNU General Public License for more details.                            *
+ *                                                                           *
+ *   You should have received a copy of the GNU General Public License       *
+ *   along with this program; if not, write to the                           *
+ *   Free Software Foundation, Inc.,                                         *
+ *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .          *
+ *****************************************************************************/
+
 #include "scene.h"
 #include <QApplication>
 #include <QMessageBox>
@@ -39,32 +59,52 @@
 #include<QHoverEvent>
 #include<depo.h>
 
+static const double Pi = 3.14159265358979323846264338327950288419717;
+static double TwoPi = 2.0 * Pi;
+
+static qreal normalizeAngle(qreal angle)
+{
+    while (angle < 0)
+        angle += TwoPi;
+    while (angle > TwoPi)
+        angle -= TwoPi;
+    return angle;
+}
+
 Scene::Scene(QObject* parent): QGraphicsScene(parent)
 {
     sceneMode = NoMode;
     sceneModeTrue=NoModeTrue;
     itemToLineDraw = 0;
     itemToRectDraw = 0;
+    tempCopyModeItemToRectDraw=0;
+
     //sampleLine=0;
     dragMove=false;
     drawing=false;
     myMousePress=true;
     //currentItem=nullptr;
     myPopMenuStatus=false;
+   // timerPergel = new QTimer(this);
+  //  connect(timerPergel, SIGNAL(timeout()), this, SLOT(donSlot()));
+tv=0;
 }
 
 void Scene::mousePressEvent(QGraphicsSceneMouseEvent *event){
     //qDebug()<<"scene press"<<depo::as;
    //int MainWindow::as{15};
    /// qDebug()<<"mousePress myMousePress:"<<myMousePress;
-
+//qDebug()<<"10";
     if(myMousePress){
     switch(sceneMode)
      {
      case DrawRectangle:{
+      //  qDebug()<<"1";
          sceneModeTrue=DrawRectangleTrue;
          origPoint = event->scenePos();
-         drawing=true;break;
+         drawing=true;
+
+         break;
      }
      case DrawLine:{sceneModeTrue=DrawLineTrue;
          origPoint = event->scenePos();
@@ -142,6 +182,16 @@ void Scene::mousePressEvent(QGraphicsSceneMouseEvent *event){
                      VERectangle * selection = dynamic_cast<VERectangle *>(item);
                         if(selection!=nullptr&&selectItem==selection){
                             selection->fareState(true);
+                            if(selection->rotateState){
+//qDebug()<<"12";
+                                tv=selection;
+                                sceneModeTrue=DrawPenTrue;
+                                sceneMoveState=false;
+                                drawing=true;dragMove=false;
+                                 origPoint =tv->scenePos();
+
+                            }
+
                            // qDebug() <<"seçme modunda rentangle seçildi";
                         }
                         if(selection!=nullptr&&selectItem!=selection){
@@ -150,35 +200,86 @@ void Scene::mousePressEvent(QGraphicsSceneMouseEvent *event){
                         }
                    }
          break;}
-     }
+
+    }
+
     QGraphicsScene::mousePressEvent(event);
     }
+
 }
 
+void Scene::donSlot()
+{
+    qDebug()<<"Dön Slot";
+    if(!itemToRectDraw){
+      //  qDebug()<<"3";
+        QSize screenSize = qApp->screens()[0]->size();
+
+        itemToRectDraw = new VERectangle(this);
+        itemToRectDraw->sekilTur(mySekilType);
+        itemToRectDraw->setPen(QPen(mySekilKalemColor, mySekilPenSize, mySekilPenStyle));
+        itemToRectDraw->setBrush(mySekilZeminColor);
+        //myImage.setToolTip("d-selee");
+        itemToRectDraw->setImage(myImage);
+        itemToRectDraw->setPos(qFabs(screenSize.width()/3),qFabs(screenSize.height()/3));
+//qDebug()<<qFabs(this->width()/2);
+        this->addItem(itemToRectDraw);
+        graphicsList.append(itemToRectDraw);
+        graphicsListTemp.append(itemToRectDraw);
+        historyBack.append(itemToRectDraw);
+        historyBackAction.append("added");
+       // itemToRectDraw->setToolTip("d-selee");
+}
+if(mySekilType==DiagramItem::DiagramType::Cetvel) itemToRectDraw->setRect(0,0,600,100);
+else if(mySekilType==DiagramItem::DiagramType::Gonye) itemToRectDraw->setRect(0,0,360,250);
+else if(mySekilType==DiagramItem::DiagramType::Iletki) itemToRectDraw->setRect(0,0,400,250);
+else if(mySekilType==DiagramItem::DiagramType::Pergel) itemToRectDraw->setRect(0,0,130,130);
+
+//else itemToRectDraw->setRect(0,0,event->scenePos().x() - origPoint.x(),event->scenePos().y() - origPoint.y());
+makeItemsControllable(false);
+itemToRectDraw->fareState(true);
+this->setMode(Scene::Mode::SelectObject, DiagramItem::DiagramType::NoType);
+itemToRectDraw=0;
+
+
+}
 void Scene::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
     //qDebug()<<"scene move";
+
   ///  qDebug()<<"mouseMove myMousePress:"<<myMousePress;
      if(myMousePress){
    switch(sceneModeTrue)
    {
    case DrawRectangleTrue:{
+
        if(!itemToRectDraw){
+
            itemToRectDraw = new VERectangle(this);
-           itemToRectDraw->sekilTur(_sekil);
+           itemToRectDraw->sekilTur(mySekilType);
            itemToRectDraw->setPen(QPen(mySekilKalemColor, mySekilPenSize, mySekilPenStyle));
            itemToRectDraw->setBrush(mySekilZeminColor);
            itemToRectDraw->setImage(myImage);
            itemToRectDraw->setPos(origPoint);
+
            this->addItem(itemToRectDraw);
            graphicsList.append(itemToRectDraw);
            graphicsListTemp.append(itemToRectDraw);
+           historyBack.append(itemToRectDraw);
+           historyBackAction.append("added");
    }
-   itemToRectDraw->setRect(0,0,event->scenePos().x() - origPoint.x(),event->scenePos().y() - origPoint.y());
-   itemToRectDraw->fareState(false);
+if(mySekilType==DiagramItem::DiagramType::Cetvel) itemToRectDraw->setRect(0,0,600,100);
+else if(mySekilType==DiagramItem::DiagramType::Gonye) itemToRectDraw->setRect(0,0,360,250);
+else if(mySekilType==DiagramItem::DiagramType::Iletki) itemToRectDraw->setRect(0,0,400,250);
+else itemToRectDraw->setRect(0,0,event->scenePos().x() - origPoint.x(),event->scenePos().y() - origPoint.y());
+makeItemsControllable(false);
+
+//itemToRectDraw->fareState(true);
+
        break;}
    case DrawLineTrue:{
        int r=mySekilPenSize;
        if(!itemToLineDraw){
+
            QPen pen(QPen(mySekilKalemColor, mySekilPenSize, mySekilPenStyle, Qt::RoundCap ,Qt::RoundJoin));
 
          //  qDebug()<<"çiziyorumm";
@@ -221,32 +322,58 @@ void Scene::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
    }
    case DrawPenTrue:{
 
-        //qDebug()<<"scene move";
-       QSize screenSize = qApp->screens()[0]->size();
-        int tolerans=screenSize.width()/10;
-       //if(qFabs(origPoint.x()-event->scenePos().x())<tolerans&&qFabs(origPoint.y()-event->scenePos().y())<tolerans)
-       //{
-           sceneMoveState=true;
+       sceneMoveState=true;
        QGraphicsLineItem*  itemToPenDraw = new QGraphicsLineItem();
        this->addItem(itemToPenDraw);
        itemToPenDraw->setPen(QPen(myPenColor,myPenSize, myPenStyle, Qt::RoundCap ,Qt::RoundJoin));
-       itemToPenDraw->setLine(origPoint.x(),origPoint.y(),event->scenePos().x(),event->scenePos().y() );
-       origPoint = event->scenePos();
-       //graphicsList.append(itemToPenDraw);
-       graphicsListTemp.append(itemToPenDraw);
-       endPos=event->scenePos();
-       graphicsListpoints.append(itemToPenDraw);
-       points<<event->scenePos();
-       itemToPenDraw=nullptr;
-      // qDebug()<<points.count();
-       if(sx>endPos.x()) sx=endPos.x();
-       if(sy>endPos.y()) sy=endPos.y();
-       if(ex<endPos.x()) ex=endPos.x();
-       if(ey<endPos.y()) ey=endPos.y();
-      //  }
+      auto *point=new QGraphicsLineItem();
+      addItem(point);
+      point->setPen(QPen(myPenColor,myPenSize, myPenStyle, Qt::RoundCap ,Qt::RoundJoin));
+       //  qDebug()<<"1";
+       if(tv!=0){
+        //qDebug()<<"2";
+       if(tv->rotateState){//pergel işlemleri yapılıyor
+           //qDebug()<<"3";
+             /*  itemToPenDraw->setLine(
+               tv->scenePos().x(),tv->scenePos().y()
+              ,tv->scenePos().x()+1,tv->scenePos().y()+1 );
+              */
 
-      // qDebug()<<"nesne sayısı"<<graphicsList.count();
-       break;}
+      itemToPenDraw->setLine(origPoint.x(),origPoint.y()
+                             ,tv->scenePos().x(),tv->scenePos().y() );
+      origPoint =tv->scenePos();
+if(tv->centerPoint==false)
+{
+      point->setLine(
+   tv->scenePos().x()+tv->boundingRect().width(),tv->scenePos().y()+tv->boundingRect().height()
+ ,tv->scenePos().x()+tv->boundingRect().width()+1,tv->scenePos().y()+tv->boundingRect().height()+1
+                  );
+      tv->centerPoint=true;
+       }
+
+       }
+
+       }else{
+          // qDebug()<<"4";
+           itemToPenDraw->setLine(origPoint.x(),origPoint.y(),event->scenePos().x(),event->scenePos().y() );
+           origPoint = event->scenePos();
+           endPos=event->scenePos();
+            points<<event->scenePos();
+
+            graphicsListTemp.append(itemToPenDraw);
+            graphicsListpoints.append(itemToPenDraw);
+           if(sx>endPos.x()) sx=endPos.x();
+           if(sy>endPos.y()) sy=endPos.y();
+           if(ex<endPos.x()) ex=endPos.x();
+           if(ey<endPos.y()) ey=endPos.y();
+
+       }
+
+
+       itemToPenDraw=nullptr;
+       // qDebug()<<"5";
+       break;
+   }
    case DrawPenFosforTrue:{
        QGraphicsLineItem*  itemToPenDraw = new QGraphicsLineItem();
        this->addItem(itemToPenDraw);
@@ -255,8 +382,13 @@ void Scene::mouseMoveEvent(QGraphicsSceneMouseEvent *event){
 
        graphicsList.append(itemToPenDraw);
        graphicsListTemp.append(itemToPenDraw);
+       ///historyBack.append(itemToRectDraw);
+       ///historyBackAction.append("added");
+
        origPoint = event->scenePos();
        graphicsListpoints.append(itemToPenDraw);
+
+
        points<<event->scenePos();
        itemToPenDraw=nullptr;
 
@@ -285,26 +417,46 @@ update();
 
 void Scene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
   ///  qDebug()<<"mouseRelease myMousePress:"<<myMousePress;
+ // qDebug()<<"3";
  if(myMousePress){
     switch (sceneModeTrue)
     {
     case DrawRectangleTrue:{
-        itemToRectDraw = 0;
-        //
-         drawing = false;
 
-        if(_sekil==DiagramItem::DiagramType::Resim)
-    {
-            this->setMode(tempSceneMode, tempSekilType);
+         //if(mySekilType==DiagramItem::DiagramType::Resim)
+        // {
+            // this->setMode(tempSceneMode, tempSekilType);
+        // }
+         //else
+        if(mySekilType==DiagramItem::DiagramType::Cizgi)
+         {
+             //itemToRectDraw->fareState(true);
+             //this->setMode(Scene::Mode::SelectObject, DiagramItem::DiagramType::NoType);
+         }
+         else if(mySekilType==DiagramItem::DiagramType::Ok)
+         {
+             //itemToRectDraw->fareState(true);
+             //this->setMode(Scene::Mode::SelectObject, DiagramItem::DiagramType::NoType);
+         }
+         else if(mySekilType==DiagramItem::DiagramType::CiftOk)
+         {
+             //itemToRectDraw->fareState(true);
+             //this->setMode(Scene::Mode::SelectObject, DiagramItem::DiagramType::NoType);
+         }
 
-          // mwindow->sekilButtonClick();
-    }
-        else
-    {
-        //  this->setMode(Scene::Mode::SelectObject, DiagramItem::DiagramType::NoType);
+         else
+         { if(itemToRectDraw!=0) itemToRectDraw->fareState(true);
+              this->setMode(Scene::Mode::SelectObject, DiagramItem::DiagramType::NoType);
 
-    }
+
+             //  this->setMode(Scene::Mode::SelectObject, DiagramItem::DiagramType::NoType);
+
+         }
         //this->setMode(Scene::Mode::SelectObject, DiagramItem::DiagramType::NoType);
+
+         itemToRectDraw = 0;
+         //
+          drawing = false;
 
            dragMove=true;
          //mwindow->sekilButtonClick();
@@ -378,16 +530,27 @@ void Scene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
         break;
     }
     case DrawPenTrue:{
+       // qDebug()<<"6";
            // qDebug()<<"scene realese"<< sceneMoveState<<points.count();
             drawing = false;
             QPixmap *pixmap4;
+            if(tv!=0){
+            if(tv->rotateState){
+               // tv->rotateState = false;
+
+                   dragMove=true;
+                sceneMoveState=false;
+                tv=0;
+               //  qDebug()<<"7";
+                break;}
+            }
         if(mySekilTanimlamaStatus) {sekilTanimlama();
             //removeOddItem();
 
 
             break;}
         /******************************************************/
-
+ //qDebug()<<"8";
 
         QPen pen(myPenColor,myPenSize, myPenStyle, Qt::RoundCap ,Qt::RoundJoin);
         QPainterPath path;
@@ -547,10 +710,12 @@ void Scene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
             itemToRectDraw->setImage(temp);
 
             itemToRectDraw->setRect(0,0,event->scenePos().x() - origPoint.x(),event->scenePos().y() - origPoint.y());
-            this->addItem(itemToRectDraw);
-             itemToRectDraw->fareState(true);
-            graphicsList.append(itemToRectDraw);
-            graphicsListTemp.append(itemToRectDraw);
+         ///   this->addItem(itemToRectDraw);
+             itemToRectDraw->fareState(false);
+
+            tempCopyModeItemToRectDraw=itemToRectDraw;///Çok önemli
+            makeItemsControllable(false);
+            itemToRectDraw->fareState(true);
             //myImage;
             itemToRectDraw = 0;
             drawing = false;
@@ -558,7 +723,7 @@ void Scene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event){
             dragMove=true;
             //this->removeItem(text);
             //this->removeItem(text1);
-           // makeItemsControllable(false);
+
             /**********************************/
             FileCrud *fc=new FileCrud();
             fc->dosya="E-Tahta.copy.ini";
@@ -642,19 +807,19 @@ setSelectionArea(pp);
 //qDebug()<<"alan "<<alan;
 float k=(3.1416*mj*mj)/(4*alan);
 qDebug()<<"K:"<<k;
-_sekil=DiagramItem::DiagramType::NoType;
- if(k>0&&k<1.4) _sekil=DiagramItem::DiagramType::Dortgen;
- else if(k>1.5&&k<2) _sekil=DiagramItem::DiagramType::Cember;
-else if(k>2&&k<2.9) _sekil=DiagramItem::DiagramType::Ucgen;
-else if(k>2.9&&k<6) _sekil=DiagramItem::DiagramType::Dortgen;
-else if(k>6) _sekil=DiagramItem::DiagramType::Cember;
+mySekilType=DiagramItem::DiagramType::NoType;
+ if(k>0&&k<1.4) mySekilType=DiagramItem::DiagramType::Dortgen;
+ else if(k>1.5&&k<2) mySekilType=DiagramItem::DiagramType::Cember;
+else if(k>2&&k<2.9) mySekilType=DiagramItem::DiagramType::Ucgen;
+else if(k>2.9&&k<6) mySekilType=DiagramItem::DiagramType::Dortgen;
+else if(k>6) mySekilType=DiagramItem::DiagramType::Cember;
 
  //origPoint = event->scenePos();
 /**********************************************/
- if(_sekil!=DiagramItem::DiagramType::NoType)
+ if(mySekilType!=DiagramItem::DiagramType::NoType)
  {
      itemToRectDraw = new VERectangle(this);
-     itemToRectDraw->sekilTur(_sekil);
+     itemToRectDraw->sekilTur(mySekilType);
      itemToRectDraw->setPen(QPen(QColor(0,0,0,255), 4, Qt::SolidLine));
      itemToRectDraw->setBrush(mySekilZeminColor);
      itemToRectDraw->setPos(sx,sy);
@@ -795,8 +960,8 @@ void Scene::setParent(QMainWindow* _mwindow)
 
 void Scene::setMode(Mode mode,DiagramItem::DiagramType sekil){
 
-    tempSekilType=_sekil;
-    _sekil=sekil;
+    tempSekilType=mySekilType;
+    mySekilType=sekil;
     tempSceneMode=sceneMode;
     sceneMode = mode;
      QGraphicsView::DragMode vMode =QGraphicsView::NoDrag;

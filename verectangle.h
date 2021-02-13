@@ -17,13 +17,33 @@
  *   Free Software Foundation, Inc.,                                         *
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .          *
  *****************************************************************************/
+/*****************************************************************************
+ *   Copyright (C) 2020 by Bayram KARAHAN                                    *
+ *   <bayramk@gmail.com>                                                     *
+ *                                                                           *
+ *   This program is free software; you can redistribute it and/or modify    *
+ *   it under the terms of the GNU General Public License as published by    *
+ *   the Free Software Foundation; either version 3 of the License, or       *
+ *   (at your option) any later version.                                     *
+ *                                                                           *
+ *   This program is distributed in the hope that it will be useful,         *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of          *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the           *
+ *   GNU General Public License for more details.                            *
+ *                                                                           *
+ *   You should have received a copy of the GNU General Public License       *
+ *   along with this program; if not, write to the                           *
+ *   Free Software Foundation, Inc.,                                         *
+ *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA .          *
+ *****************************************************************************/
+
 #ifndef RECTANGLE_H
 #define RECTANGLE_H
 
 #include <QObject>
 #include <QGraphicsRectItem>
 #include<diagramitem.h>
-
+#include<QStaticText>
 class DotSignal;
 class QGraphicsSceneMouseEvent;
 
@@ -84,6 +104,10 @@ public:
          myPath=_myPath;
 
       }
+    bool rotateState=false;
+    int cx;
+    int cy;
+     bool centerPoint=false;
 signals:
     void rectChanged(VERectangle *rect);
     void previousPositionChanged();
@@ -101,6 +125,7 @@ protected:
     QVariant itemChange(GraphicsItemChange change, const QVariant &value) override;
     void paint (QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *);
 private:
+
     QPixmap myImage;
       QPainterPath myPath;
     QGraphicsScene *scn;

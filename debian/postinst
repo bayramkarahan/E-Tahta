@@ -1,0 +1,13 @@
+#!/bin/sh
+
+#copy files to user home
+
+if [ -d "/home" ]; then
+    if ! [ -z "$(ls -A /home)" ]; then
+        user=""
+        for i in /home/*
+        do
+           touch -frv "$i"/E-Tahta.config.ini 
+        done
+    fi
+fi
